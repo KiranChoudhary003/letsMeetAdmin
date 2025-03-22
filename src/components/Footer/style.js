@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Wrapper = styled.footer`
-background : rgb(199, 200, 192);
+background : rgb(177, 179, 215);
 width : 100%;
 p{
     text-align : center;

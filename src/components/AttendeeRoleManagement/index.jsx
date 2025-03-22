@@ -1,9 +1,9 @@
 import React from 'react'
 
-const UserRoleManagement = () => {
+const AttendeeRoleManagement = () => {
   return (
     <div>User Role Management</div>
   )
 }
 
-export default UserRoleManagement
+export default AttendeeRoleManagement

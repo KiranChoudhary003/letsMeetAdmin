@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Wrapper = styled.header`
-background : rgb(199, 200, 192);
+background : rgb(177, 179, 215);
 width : calc(100%-210px);
 .header{
     display : flex;

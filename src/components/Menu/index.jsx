@@ -24,19 +24,19 @@ const Menu = () => {
                     </div>
                     <div className='usermanagement' onClick={() => handleChange('/userManagement')}>
                         <FaUsers size={24} />
-                        <span>User Management</span>
+                        <span>User</span>
                     </div>
                     <div className='eventMangement' onClick={() => handleChange('/eventManagement')}>
                         <MdEvent size={24} />
-                        <span>Event Management</span>
+                        <span>Event</span>
                     </div>
                     <div className='attendeManagement' onClick={() => handleChange('/attendeeManagement')}>
                         <MdPeople size={24} />
-                        <span>Attendee & Connection Management</span>
+                        <span>Attendee</span>
                     </div>
-                    <div className='userRole' onClick={() => handleChange('/userRole')}>
+                    <div className='attendeeRole' onClick={() => handleChange('/attendeeRole')}>
                         <FaUsers size={24} />
-                        <span>User Role Management</span>
+                        <span>Attendee Role</span>
                     </div>
                     <div className='settings' onClick={() => handleChange('/settings')}>
                         <FaCog size={24} />
@@ -44,7 +44,7 @@ const Menu = () => {
                     </div>
                     <div className='reports' onClick={() => handleChange('/reports')}>
                         <FaChartBar size={24} />
-                        <span>Reports & Analytics</span>
+                        <span>Reports</span>
                     </div>
                     <div className='security' onClick={() => handleChange('/security')}>
                         <FaShieldAlt size={24} />
@@ -56,7 +56,7 @@ const Menu = () => {
                     </div>
                     <div className='aiRecommendation' onClick={() => handleChange('/aiRecommendation')}>
                         <FaLightbulb size={24} />
-                        <span>AI Recommendation for Connection in Each Event</span>
+                        <span>AI Recommendation</span>
                     </div>
                 </div>
             </div>

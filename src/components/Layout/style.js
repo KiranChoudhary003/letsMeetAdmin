@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   .menu {
       width: 210px; 
       flex-shrink: 0;
-      background: rgb(199, 200, 192);
+      background: rgb(177, 179, 215);
   }
 
   .menu h1 {

@@ -1,314 +1,137 @@
-import React, { useState } from 'react'
-import Wrapper from './style'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import React, { useEffect, useMemo, useState } from 'react';
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
+import Wrapper from './style';
 
-const Dashboard = () => {
-  const userData = [
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 5, created: 10 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 12, created: 18 },
-      spentTime: 5,
-      date: '2025-2-3'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 7, created: 8 },
-      videoLinks: { total: 5, shared: 3, created: 2 },
-      totalLinks: { total: 30, shared: 15, created: 15 },
-      spentTime: 4,
-      date: '2025-2-4'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 1,
-      date: '2025-2-3'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 3.5,
-      date: '2025-2-3'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 1.5,
-      date: '2025-2-4'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 2,
-      date: '2024-3-13'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 6,
-      date: '2025-1-3'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 1,
-      date: '2025-3-3'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-3-3'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-25'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 2,
-      date: '2025-2-5'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 1,
-      date: '2025-2-10'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 4,
-      date: '2025-2-15'
-    },
-    {
-      name: 'Kiran Choudhary',
-      articles: { total: 15, shared: 6, created: 9 },
-      videoLinks: { total: 5, shared: 2, created: 3 },
-      totalLinks: { total: 30, shared: 10, created: 20 },
-      spentTime: 5,
-      date: '2025-2-20'
-    }
-  ]
+const Dashboard = () => { 
+  const userData = useMemo(() => ({
+    "Current Year": [
+      { month: 'Jan', totalUsers: 150, totalConnections: 90, eventRegistered: 100 },
+      { month: 'Feb', totalUsers: 200, totalConnections: 140, eventRegistered: 150 },
+      { month: 'Mar', totalUsers: 250, totalConnections: 180, eventRegistered: 200 },
+      { month: 'Apr', totalUsers: 230, totalConnections: 160, eventRegistered: 180 },
+      { month: 'May', totalUsers: 270, totalConnections: 200, eventRegistered: 220 },
+      { month: 'Jun', totalUsers: 320, totalConnections: 280, eventRegistered: 300 },
+      { month: 'Jul', totalUsers: 300, totalConnections: 260, eventRegistered: 280 },
+      { month: 'Aug', totalUsers: 370, totalConnections: 320, eventRegistered: 350 },
+      { month: 'Sep', totalUsers: 420, totalConnections: 370, eventRegistered: 400 },
+      { month: 'Oct', totalUsers: 450, totalConnections: 400, eventRegistered: 420 },
+      { month: 'Nov', totalUsers: 480, totalConnections: 430, eventRegistered: 450 },
+      { month: 'Dec', totalUsers: 490, totalConnections: 460, eventRegistered: 480 }
+    ],
+    "Previous Year": [
+      { month: 'Jan', totalUsers: 130, totalConnections: 80, eventRegistered: 90 },
+      { month: 'Feb', totalUsers: 180, totalConnections: 120, eventRegistered: 130 },
+      { month: 'Mar', totalUsers: 210, totalConnections: 150, eventRegistered: 170 },
+      { month: 'Apr', totalUsers: 190, totalConnections: 130, eventRegistered: 140 },
+      { month: 'May', totalUsers: 240, totalConnections: 170, eventRegistered: 190 },
+      { month: 'Jun', totalUsers: 280, totalConnections: 230, eventRegistered: 250 },
+      { month: 'Jul', totalUsers: 260, totalConnections: 210, eventRegistered: 230 },
+      { month: 'Aug', totalUsers: 330, totalConnections: 280, eventRegistered: 310 },
+      { month: 'Sep', totalUsers: 390, totalConnections: 330, eventRegistered: 370 },
+      { month: 'Oct', totalUsers: 420, totalConnections: 350, eventRegistered: 390 },
+      { month: 'Nov', totalUsers: 450, totalConnections: 400, eventRegistered: 420 },
+      { month: 'Dec', totalUsers: 470, totalConnections: 420, eventRegistered: 450 }
+    ]
+  }), []);
 
-  const [selectedRange, setSelectedRange] = useState('last month');
-  // const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedYear, setSelectedYear] = useState('Current Year');
+  const [totals, setTotals] = useState({
+    totalUsers: 0,
+    totalConnections: 0,
+    totalEvents: 0
+  });
 
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.4
+  });
 
-  const filterDataByDate = () => {
-    const today = new Date();
-    let startDate;
+  useEffect(() => {
+    const data = userData[selectedYear];
+    const totalUsers = data.reduce((sum, item) => sum + item.totalUsers, 0);
+    const totalConnections = data.reduce((sum, item) => sum + item.totalConnections, 0);
+    const totalEvents = data.reduce((sum, item) => sum + item.eventRegistered, 0);
 
-    if (selectedRange === 'last week') {
-      startDate = new Date();
-      startDate.setDate(today.getDate() - 7);
-    } else if (selectedRange === 'last month') {
-      startDate = new Date();
-      startDate.setMonth(today.getMonth() - 1);
-    } else if (selectedRange === 'last quarter') {
-      startDate = new Date();
-      startDate.setMonth(today.getMonth() - 3);
-    } else if (selectedRange === 'last year') {
-      startDate = new Date();
-      startDate.setFullYear(today.getFullYear() - 1);
-    } else {
-      return userData;
-    }
+    setTotals({
+      totalUsers,
+      totalConnections,
+      totalEvents
+    });
+  }, [userData, selectedYear]);
 
-    return userData.filter(user => new Date(user.date) >= startDate);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth * 0.8,
+        height: window.innerHeight * 0.4
+      });
+    };
 
-  const aggregatedData = filterDataByDate().reduce((acc, user) => {
-    if (!acc[user.date]) {
-      acc[user.date] = { date: user.date, spentTime: 0, count: 0 };
-    }
-    acc[user.date].spentTime += user.spentTime;
-    acc[user.date].count++;
-    return acc;
-  }, {});
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const chartData = Object.values(aggregatedData).map(entry => ({
-    date: entry.date,
-    spentTime: entry.spentTime / entry.count
-  }))
-
-  const totalUsers = userData.length
-
-  const {
-    totalArticles, sharedArticles, createdArticles,
-    totalVideos, sharedVideos, createdVideos,
-    totalAllLinks, sharedAllLinks, createdAllLinks
-  } = userData.reduce(
-    (acc, user) => {
-      acc.totalArticles += user.articles.total;
-      acc.sharedArticles += user.articles.shared;
-      acc.createdArticles += user.articles.created;
-
-      acc.totalVideos += user.videoLinks.total;
-      acc.sharedVideos += user.videoLinks.shared;
-      acc.createdVideos += user.videoLinks.created;
-
-      acc.totalAllLinks += user.totalLinks.total;
-      acc.sharedAllLinks += user.totalLinks.shared;
-      acc.createdAllLinks += user.totalLinks.created;
-
-      return acc;
-    },
-    {
-      totalArticles: 0, sharedArticles: 0, createdArticles: 0,
-      totalVideos: 0, sharedVideos: 0, createdVideos: 0,
-      totalAllLinks: 0, sharedAllLinks: 0, createdAllLinks: 0
-    }
-  )
 
   return (
     <Wrapper>
-      <div className='cover'>
-        <div className='heading1'>
-        <h1>Dashboad</h1>
-        </div>
+      <div className='dashboard'>
+        <h1>Dashboard</h1>
+      </div>
       <div className='container'>
-        <div className='users'>
-          <h2>Users</h2>
-          <h1>{totalUsers}</h1>
+        <div className='totalUsers'>
+          <h2>Total Users</h2>
+          <h1>{totals.totalUsers}</h1>
         </div>
-        <div className='articles'>
-          <h2>Articles</h2>
-          <h1>{totalArticles}</h1>
-          <div className='span'>
-            <span>Shared : {sharedArticles}</span>
-            <span>Created : {createdArticles}</span>
-          </div>
+        <div className='eventRegisteredUsers'>
+          <h2>Event Registered</h2>
+          <h1>{totals.totalEvents}</h1>
         </div>
-        <div className='videos'>
-          <h2>Video Links</h2>
-          <h1>{totalVideos}</h1>
-          <div className='span'>
-            <span>Shared : {sharedVideos}</span>
-            <span>Created : {createdVideos}</span>
-          </div>
-        </div>
-        <div className='links'>
-          <h2>Total Links</h2>
-          <h1>{totalAllLinks}</h1>
-          <div className='span'>
-            <span>Shared : {sharedAllLinks}</span>
-            <span>Created : {createdAllLinks}</span>
-          </div>
+        <div className='totalConnections'>
+          <h2>Total Connections</h2>
+          <h1>{totals.totalConnections}</h1>
         </div>
       </div>
-      <div className="chart-container" style={{width : '95%'}}>
-        <div className="heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '10px', paddingRight: '20px' }}>
-          <h2>Average Time Spent By Users</h2>
-          <select style={{ borderRadius: '10px', padding: '5px', border: '1px solid #ccc' }} onChange={(e) => setSelectedRange(e.target.value)} value={selectedRange}>
-            <option value="last week">Last Week</option>
-            <option value="last month">Last Month</option>
-            <option value="last quarter">Last Quarter</option>
-            <option value="last year">Last Year</option>
-          </select>
+      <div className='graph'>
+        {/* Filter Section */}
+        <div className="button">
+          <button
+            onClick={() => setSelectedYear('Current Year')}
+            style={{
+              padding: '5px 10px',
+              marginRight: '5px',
+              backgroundColor: selectedYear === 'Current Year' ? '#4CAF50' : '#f0f0f0'
+            }}
+          >
+            Current Year
+          </button>
+
+          <button
+            onClick={() => setSelectedYear('Previous Year')}
+            style={{
+              padding: '5px 10px',
+              backgroundColor: selectedYear === 'Previous Year' ? '#4CAF50' : '#f0f0f0'
+            }}
+          >
+            Previous Year
+          </button>
         </div>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={chartData}>
-            <XAxis dataKey="date" label={{ value: 'Date', position: 'insideBottom', offset: -5 }} />
-            <YAxis label={{ value: 'Avg Time Spent (hrs)', angle: -90, position: 'insideLeft' }} />
+        <div className='chart'>
+          {/* Line Chart Section */}
+          <LineChart
+            width={windowSize.width}  
+            height={windowSize.height}  
+            data={userData[selectedYear]}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis domain={[0, 500]} tickCount={11} />
             <Tooltip />
-            <Line type="monotone" dataKey="spentTime" stroke="#8884d8" strokeWidth={2} />
+            <Legend />
+            <Line type="monotone" dataKey="totalUsers" stroke="#6f42c1" strokeWidth={2} />
+            <Line type="monotone" dataKey="totalConnections" stroke="#007bff" strokeWidth={2} />
+            <Line type="monotone" dataKey="eventRegistered" stroke="#28a745" strokeWidth={2} />
           </LineChart>
-        </ResponsiveContainer>
-      </div>
-          {/* <div className="w-full p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">User Login Statistics</h2>
-      <Select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-        <option value="2024">2024</option>
-        <option value="2025">2025</option>
-        <option value="2026">2026</option>
-      </Select>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data[selectedYear] || []}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="users" stroke="#8884d8" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div> */}
+        </div>
       </div>
     </Wrapper>
   )
