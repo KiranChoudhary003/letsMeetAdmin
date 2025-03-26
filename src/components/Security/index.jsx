@@ -28,17 +28,25 @@ const Security = ({ users, setUsers }) => {
   }
 
   const handleChange = (id, newStatus) => {
-    const confirmAction = window.confirm(`Are you sure you want to mark this report as "${newStatus}"?`)
-
-    if (confirmAction) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === id ? { ...user, reportStatus: newStatus } : user
-        )
-      )
-    }
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.id === id) {
+          if (user.reportStatus === "pending" && newStatus === "In Progress") {
+            return { ...user, reportStatus: "In Progress" }
+          } else if (user.reportStatus.toLowerCase() === "in progress" && newStatus === "Completed") {
+            return { ...user, reportStatus: "Completed" }
+          } else if (user.reportStatus.toLowerCase() === "completed") {
+            alert("Status is already Completed and cannot be changed.")
+            return user
+          }
+        }
+        return user
+      })
+    )
+  
+    console.log("Updated Users:", users) 
   }
-
+  
 
   return (
     <Wrapper isVisible={isVisible}>

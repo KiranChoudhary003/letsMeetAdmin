@@ -11,29 +11,37 @@ import QRCode from "./components/QRCode"
 import AIRecommendation from "./components/AIRecommendation"
 import AttendeeRoleManagement from "./components/AttendeeRoleManagement"
 import UserManagement from "./components/UserManagement"
+import UserEngagement from "./components/UserEngagement"
+import EventAnalytics from "./components/EventAnalytics"
+import ConnectionTrends from "./components/ConnectionTrends"
 
 const App = () => {
 
   const eventData = [
     {
       id : 1,
-      eventName : "React"
+      eventName : "React",
+      date : "2025-03-08"
     },
     {
       id : 2,
-      eventName : "DevOps"
+      eventName : "DevOps",
+      date : "2025-03-08"
     },
     {
       id: 3,
-      eventName : "SalesForce"
+      eventName : "SalesForce",
+      date : "2025-01-28"
     },
     {
       id : 4,
-      eventName : "Cloud"
+      eventName : "Cloud",
+      date : "2024-10-20"
     },
     {
       id : 5,
-      eventName : "Hackathon"
+      eventName : "Hackathon",
+      date : "2024-11-25"
     }
   ]
 
@@ -49,7 +57,7 @@ const App = () => {
       id: 1,
       userName: "Aayushi Modi",
       guestName: "John",
-      userStatus: "pending",
+      userStatus: "Denied",
       reportStatus: "pending",
       issue: "App crashes frequently",
       connection: { total: 16, 1: 5, 2: 3, 3: 8 },
@@ -160,7 +168,10 @@ const App = () => {
           <Route path="attendeeManagement" element={<AttendeeManagement />} />
           <Route path="attendeeRole" element={<AttendeeRoleManagement />} />
           <Route path="settings" element={<Settings users={users} setUsers={setUsers} />} />
-          <Route path="reports" element={<Reports users={users} setUsers={setUsers} events={events}/>} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="reports/user-engagement" element={<UserEngagement users={users} events={events}/>}/>
+          <Route path="reports/event-analytics" element={<EventAnalytics events={events} users={users}/>}/>
+          <Route path="reports/connection-trends" element={<ConnectionTrends users={users} events={events}/>}/>
           <Route path="security" element={<Security users={users} setUsers={setUsers} />} />
           <Route path="qrCode" element={<QRCode />} />
           <Route path="aiRecommendation" element={<AIRecommendation />} />

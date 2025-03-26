@@ -73,10 +73,11 @@ const Wrapper = styled.div`
 
   .table-container {
     width : 100%;
-    max-height: 505px; 
+    max-height: 450px; 
     overflow-y: auto;
     margin-top : 10px;
     box-sizing : border-box;
+    padding : 0 10px;
   }
 
   table {
