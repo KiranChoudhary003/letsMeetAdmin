@@ -14,6 +14,7 @@ import UserManagement from "./components/UserManagement"
 import UserEngagement from "./components/UserEngagement"
 import EventAnalytics from "./components/EventAnalytics"
 import ConnectionTrends from "./components/ConnectionTrends"
+import ProfilePage from "./components/AttendeeManagement/ProfilePage"
 
 const App = () => {
 
@@ -174,6 +175,7 @@ const App = () => {
           <Route path="reports/connection-trends" element={<ConnectionTrends users={users} events={events}/>}/>
           <Route path="security" element={<Security users={users} setUsers={setUsers} />} />
           <Route path="qrCode" element={<QRCode />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="aiRecommendation" element={<AIRecommendation />} />
         </Route>
       </Routes>
