@@ -14,6 +14,8 @@ import UserManagement from "./components/UserManagement"
 import UserEngagement from "./components/UserEngagement"
 import EventAnalytics from "./components/EventAnalytics"
 import ConnectionTrends from "./components/ConnectionTrends"
+import Profile from "./components/Profile"
+import ProfilePage from "./components/AttendeeManagement/ProfilePage"
 
 const App = () => {
 
@@ -163,16 +165,18 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
+          <Route path="profile" element={<Profile />}/>
           <Route path="userManagement" element={<UserManagement />} />
           <Route path="eventManagement" element={<EventManagement />} />
           <Route path="attendeeManagement" element={<AttendeeManagement />} />
+          <Route path="attendeeManagement/profile/:id" element={<ProfilePage />} />
           <Route path="attendeeRole" element={<AttendeeRoleManagement />} />
           <Route path="settings" element={<Settings users={users} setUsers={setUsers} />} />
           <Route path="reports" element={<Reports />} />
           <Route path="reports/user-engagement" element={<UserEngagement users={users} events={events}/>}/>
           <Route path="reports/event-analytics" element={<EventAnalytics events={events} users={users}/>}/>
           <Route path="reports/connection-trends" element={<ConnectionTrends users={users} events={events}/>}/>
-          <Route path="security" element={<Security users={users} setUsers={setUsers} />} />
+          <Route path="security" element={<Security />} />
           <Route path="qrCode" element={<QRCode />} />
           <Route path="aiRecommendation" element={<AIRecommendation />} />
         </Route>

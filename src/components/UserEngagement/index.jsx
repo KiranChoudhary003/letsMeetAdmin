@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Wrapper from "./style";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const UserEngagement = ({ users, events }) => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState("this month");
@@ -10,7 +12,7 @@ const UserEngagement = ({ users, events }) => {
   const filterByTimePeriod = (event) => {
     const eventDate = new Date(event.date);
     const currentDate = new Date();
-    
+
     switch (selectedTimePeriod) {
       case "this month":
         return (
@@ -59,12 +61,19 @@ const UserEngagement = ({ users, events }) => {
       connections: user.connection[selectedEventID] || 0,
     }))
     .sort((a, b) => b.connections - a.connections)
-    .slice(0, 5); // Show top 5 users
+    .slice(0, 5)
+
+    const navigate = useNavigate()
+
+    const handleChange = () => {
+      navigate(-1)
+    }
 
   return (
     <Wrapper>
+      <IoMdArrowRoundBack className='backArrow' onClick={handleChange}/>
       <h2>User Engagement</h2>
-      
+
       {/* Time Period Filter */}
       <label>Time Period:</label>
       <select value={selectedTimePeriod} onChange={(e) => setSelectedTimePeriod(e.target.value)}>

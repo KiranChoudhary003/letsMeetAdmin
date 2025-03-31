@@ -24,19 +24,19 @@ const Menu = () => {
                     </div>
                     <div className='usermanagement' onClick={() => handleChange('/userManagement')}>
                         <FaUsers size={24} />
-                        <span>User</span>
+                        <span>Users</span>
                     </div>
                     <div className='eventMangement' onClick={() => handleChange('/eventManagement')}>
                         <MdEvent size={24} />
-                        <span>Event</span>
+                        <span>Events</span>
                     </div>
                     <div className='attendeManagement' onClick={() => handleChange('/attendeeManagement')}>
                         <MdPeople size={24} />
-                        <span>Attendee</span>
+                        <span>Attendees</span>
                     </div>
                     <div className='attendeeRole' onClick={() => handleChange('/attendeeRole')}>
                         <FaUsers size={24} />
-                        <span>Attendee Role</span>
+                        <span>Attendee Roles</span>
                     </div>
                     <div className='settings' onClick={() => handleChange('/settings')}>
                         <FaCog size={24} />

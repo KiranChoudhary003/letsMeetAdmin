@@ -1,12 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import Wrapper from './style'
+import axios from 'axios'
 
-const Security = ({ users, setUsers }) => {
+const Security = () => {
+
+  const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
 
   const [isVisible, setIsVisible] = useState(null)
   const [isBlock, setIsBlock] = useState({})
+  const [users, setUsers] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${REACT_APP_BACKEND_URL}/users/block-status`);
+        if (response.data && response.data.users) {
+          const userResponse = response.data.users;
+
+          // Create block status mapping
+          const blockStatusMap = {};
+          userResponse.forEach(user => {
+            blockStatusMap[user.user_id] = user.block_status === "blocked" ? "Block" : "Unblock";
+          });
+
+          setUsers(userResponse);
+          setIsBlock(blockStatusMap);
+        }
+      } catch (error) {
+        console.log(`Error fetching the data`);
+      }
+    };
+
+    fetchData();
+  }, [])
 
   const handleVisibility = (section) => {
     setIsVisible(section)
@@ -16,14 +44,32 @@ const Security = ({ users, setUsers }) => {
     setIsVisible(null)
   }
 
-  const handleStatusChange = (userId) => {
-    const confirmAction = window.confirm("Are you sure you want to change the block status?")
+  const handleStatusChange = async (userId) => {
+    const confirmAction = window.confirm("Are you sure you want to change the block status?");
 
     if (confirmAction) {
-      setIsBlock((prevBlockedUsers) => ({
-        ...prevBlockedUsers,
-        [userId]: prevBlockedUsers[userId] === 'Blocked' ? 'Block' : 'Blocked',
-      }))
+      // Determine the new block status
+      const currentStatus = isBlock[userId];
+      const newStatus = currentStatus === "Block" ? "unblocked" : "blocked";
+
+      try {
+        // Send the PUT request with headers ensuring JSON format
+        await axios.put(`${REACT_APP_BACKEND_URL}/users/block-status`, {
+          id: userId,
+          block_status: newStatus
+        }, {
+          headers: { "Content-Type": "application/json" }  // ✅ Ensure request is JSON
+        });
+
+        // Update the UI state
+        setIsBlock((prev) => ({
+          ...prev,
+          [userId]: newStatus === "blocked" ? "Block" : "Unblock"
+        }));
+      } catch (error) {
+        console.error("Error updating block status:", error.response ? error.response.data : error.message);
+        alert("Failed to update block status!");
+      }
     }
   }
 
@@ -43,13 +89,13 @@ const Security = ({ users, setUsers }) => {
         return user
       })
     )
-  
-    console.log("Updated Users:", users) 
+
+    console.log("Updated Users:", users)
   }
-  
+
 
   return (
-    <Wrapper isVisible={isVisible}>
+    <Wrapper>
       <div className="container">
         <div className="heading">
           <h1>Security</h1>
@@ -64,7 +110,7 @@ const Security = ({ users, setUsers }) => {
         </div>
 
         <div className="accordion">
-          <h2 onClick={() => handleVisibility('reports')}>Resolve Reports</h2>
+          <h2 onClick={() => handleVisibility('reports')}>Case Content</h2>
         </div>
       </div>
 
@@ -89,15 +135,15 @@ const Security = ({ users, setUsers }) => {
                     </thead>
                     <tbody>
                       {users.map((user, index) => (
-                        <tr key={user.id}>
+                        <tr key={user.user_id}>
                           <td>{index + 1}</td>
-                          <td>{user.userName}</td>
+                          <td>{user.user_name}</td>
                           <td>
                             <input
                               type="button"
-                              className={isBlock[user.id] === 'Blocked' ? 'danger-btn' : 'primary-btn'}
-                              value={isBlock[user.id] || 'Block'}
-                              onClick={() => handleStatusChange(user.id)}
+                              className={isBlock[user.user_id] === 'Unblock' ? 'danger-btn' : 'primary-btn'}
+                              value={isBlock[user.user_id] || 'Block'}
+                              onClick={() => handleStatusChange(user.user_id)}
                             />
                           </td>
                         </tr>
@@ -129,7 +175,7 @@ const Security = ({ users, setUsers }) => {
             )}
             {isVisible === 'reports' && (
               <>
-                <h2>Resolve Reports Content</h2>
+                <h2>Case Content</h2>
                 <div className="scroll-container">
                   <table>
                     <thead>

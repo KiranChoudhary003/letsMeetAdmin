@@ -6,12 +6,12 @@ const Wrapper = styled.section`
   background: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
 
   h2 {
     font-size: 24px;
     color: #333;
     margin-bottom: 20px;
+    text-align: center;
   }
 
   .chart-container {
@@ -26,6 +26,11 @@ const Wrapper = styled.section`
     .chart-container {
       flex-direction: row;
     }
+  }
+  
+  .backArrow{
+    width : 30px;
+    height : 30px;
   }
 `;
 

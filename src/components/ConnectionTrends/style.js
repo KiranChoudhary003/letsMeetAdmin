@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -18,9 +18,12 @@ const Wrapper = styled.div`
   }
 
   .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Ensures h2 stays centered */
+    position: relative;
     padding-bottom: 15px;
     border-bottom: 2px solid #eee;
-    text-align: center;
   }
 
   h2 {
@@ -28,6 +31,15 @@ const Wrapper = styled.div`
     font-weight: 600;
     color: #333;
     margin: 0;
+  }
+
+  .backArrow {
+    position: absolute;
+    left: 0;
+    font-size: 28px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.2s ease;
   }
 
   .scroll-container {
@@ -80,6 +92,10 @@ const Wrapper = styled.div`
 
     th, td {
       padding: 10px;
+    }
+
+    .backArrow {
+      font-size: 30px;
     }
   }
 `;

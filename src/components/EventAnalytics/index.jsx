@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
 import Wrapper from "./style";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const EventAnalytics = ({ events, users }) => {
   const [eventConnection, setEventConnection] = useState({});
@@ -34,10 +36,17 @@ const EventAnalytics = ({ events, users }) => {
     .sort((a, b) => b.connectionCount - a.connectionCount)
     .slice(0, 3);
 
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658"]
+  
+  const navigate = useNavigate()
+
+  const handleChange = () => {
+    navigate(-1)
+  }
 
   return (
     <Wrapper>
+      <IoMdArrowRoundBack className="backArrow" onClick={handleChange} />
       <h2>Event Analytics</h2>
       <div className="chart-container">
         {/* Bar Chart */}
@@ -46,7 +55,11 @@ const EventAnalytics = ({ events, users }) => {
             <XAxis dataKey="eventName" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="connectionCount" fill="#8884d8" barSize={50} />
+            <Bar dataKey="connectionCount" barSize={50}>
+              {eventData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
 

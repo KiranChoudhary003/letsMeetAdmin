@@ -88,6 +88,11 @@ const Wrapper = styled.section`
       padding: 7px;
     }
   }
+
+  .backArrow{
+    width : 30px;
+    height : 30px;
+  }
 `;
 
 export default Wrapper;
