@@ -140,35 +140,42 @@ const UserManagement = () => {
 
 
       {
-  modalType && (
-    <div className="modal">
-      <div className={`modal-content ${modalType}`}>
-        <button className="close-btn" onClick={closeModal}>&times;</button>
-        {modalType === "reset-password" ? (
-          <>
-            <h3>Reset Password for {currentUser.name}</h3>
-            <input type="password" placeholder="Enter New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-            <button onClick={handleResetPassword} className="submit-btn">Reset</button>
-          </>
-        ) : (
-          <>
-            <h3>{modalType === "edit" ? "Edit User" : "Add User"}</h3>
-            <div className="form-group">
-              <input type="text" placeholder="Name" value={currentUser.name || ""} onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })} />
-            </div>
-            <div className="form-group">
-              <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
-            </div>
-            <div className="form-group">
-              <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
-            </div>
-            <button onClick={handleSaveUser} className="submit-btn">Save</button>
-          </>
-        )}
-      </div>
+ modalType === "add" ? (
+  <div className="modal">
+    <div className="modal-content">
+      <h3>Add User</h3>
+      <input type="text" placeholder="Name" value={currentUser.name || ""} onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })} />
+      <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
+      <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
+      <button onClick={handleSaveUser} className="submit-btn">Save</button>
+      <button className="close-btn" onClick={closeModal}>&times;</button>
     </div>
-  )
-}
+  </div>
+) : null}
+     {
+ modalType ==="edit" ? (
+  <div className="modal">
+    <div className="modal-content">
+      <h3>Edit User</h3>
+      <input type="text" placeholder="Name" value={currentUser.name || ""} onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })} />
+      <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
+      <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
+      <button onClick={handleSaveUser} className="submit-btn">Save</button>
+      <button className="close-btn" onClick={closeModal}>&times;</button>
+    </div>
+  </div>
+) : null}
+
+{modalType === "reset-password" && (
+  <div className="modal">
+    <div className="modal-content">
+      <h3>Reset Password for {currentUser.name}</h3>
+      <input type="password" placeholder="Enter New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+      <button onClick={handleResetPassword} className="submit-btn">Reset Password</button>
+      <button className="close-btn" onClick={closeModal}>&times;</button>
+    </div>
+  </div>
+)}
 
     </Wrapper >
   );
