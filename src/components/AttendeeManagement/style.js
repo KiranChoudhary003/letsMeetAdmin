@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  padding: 12px;
+  padding: 24px;
   margin: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
@@ -25,6 +25,7 @@ const Wrapper = styled.section`
   }
 
   .search-icon {
+  
     position: absolute;
     left: 12px;
     color: #888;

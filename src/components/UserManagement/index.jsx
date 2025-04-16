@@ -7,29 +7,44 @@ import { Search } from "lucide-react";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([
-    { id: 1, name: "Jese Leos", email: "jese.leos@example.com", role: "Admin", status: "Active", password: "admin123", selected: false, showPassword: false },
-    { id: 2, name: "Bonnie Green", email: "bonnie.green@example.com", role: "Editor", status: "Banned", password: "editor123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-    { id: 3, name: "Leslie Livingston", email: "leslie.livingstone@example.com", role: "User", status: "Active", password: "user123", selected: false, showPassword: false },
-
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    // add more users here...
   ]);
-
+  
+  const handleSubmit = async () => {
+    const userToSave = { ...currentUser, role_id: 3 };
+    // your fetch/axios POST or PUT call here
+  };
+  
   const [search, setSearch] = useState(""),
     [modalType, setModalType] = useState(""),
     [currentUser, setCurrentUser] = useState({}),
     [newPassword, setNewPassword] = useState("");
 
-
+    const handleEdit = (user) => {
+      setCurrentUser({
+        name: user.name || "",
+        email: user.email || "",
+        password: user.password || "",
+        status: user.status || "Active",
+        role_id: 3,  // Force to 3
+      });
+    };
+    
+    
   const getNextId = () => users.reduce((maxId, user) => Math.max(maxId, user.id), 0) + 1;
 
   const updateUsers = (updatedUsers) => setUsers(updatedUsers.map((user, index) => ({ ...user, id: index + 1 })));
@@ -103,11 +118,15 @@ const UserManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {users.filter(user => user.name.toLowerCase().includes(search.toLowerCase())).map(user => (
+            {users
+            .filter((user) => 
+  (`${user.first_name || ''} ${user.last_name || ''}`).toLowerCase().includes(search.toLowerCase())
+)
+.map(user => (
               <tr key={user.id}>
                 <td><input type="checkbox" checked={user.selected} onChange={() => handleSelectUser(user.id)} /></td>
                 <td>{user.id}</td>
-                <td>{user.name}</td>
+                <td>{`${user.first_name || ""} ${user.middle_name || ""} ${user.last_name || ""}`.trim()}</td>
                 <td>{user.email}</td>
                 <td>{user.role} </td>
 
@@ -126,6 +145,7 @@ const UserManagement = () => {
 
                     <button className="edit-btn" onClick={() => openModal("edit", user)}>
                       <FaEdit size={15} /> {/* Edit Icon */}
+                      
                     </button>
                     <button className="delete-btn" onClick={() => handleDelete(user.id)}>
                       <MdDelete size={15} /> {/* Delete Icon */}
@@ -144,9 +164,18 @@ const UserManagement = () => {
   <div className="modal">
     <div className="modal-content">
       <h3>Add User</h3>
-      <input type="text" placeholder="Name" value={currentUser.name || ""} onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })} />
+      <input type="text" placeholder="First Name" value={currentUser.first_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })} />
+      <input type="text" placeholder="Middle Name" value={currentUser.middle_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, middle_name: e.target.value })} />
+      <input type="text" placeholder="Last Name" value={currentUser.last_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })} />
       <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
       <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
+      <input 
+    type="text" 
+    value={`Role ID - ${currentUser.role_id || 3}`}  
+    readOnly 
+  />
+      <input type="text" placeholder="LinkedIn URL" value={currentUser.linkedin_url || ""} onChange={(e) => setCurrentUser({ ...currentUser, linkedin_url: e.target.value })} />
+      <input type="password" placeholder="Password" value={currentUser.password || ""} onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })} />
       <button onClick={handleSaveUser} className="submit-btn">Save</button>
       <button className="close-btn" onClick={closeModal}>&times;</button>
     </div>
@@ -157,9 +186,12 @@ const UserManagement = () => {
   <div className="modal">
     <div className="modal-content">
       <h3>Edit User</h3>
-      <input type="text" placeholder="Name" value={currentUser.name || ""} onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })} />
+      <input type="text" placeholder="First Name" value={currentUser.first_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })} />
+      <input type="text" placeholder="Middle Name" value={currentUser.middle_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, middle_name: e.target.value })} />
+      <input type="text" placeholder="Last Name" value={currentUser.last_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })} />
       <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
       <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
+      <input type="text" placeholder="LinkedIn URL" value={currentUser.linkedin || ""} onChange={(e) => setCurrentUser({ ...currentUser, linkedin: e.target.value })} />
       <button onClick={handleSaveUser} className="submit-btn">Save</button>
       <button className="close-btn" onClick={closeModal}>&times;</button>
     </div>
