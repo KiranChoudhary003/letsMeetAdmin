@@ -14,14 +14,14 @@ import axios from 'axios';
 
 const EventManagement = () => {
 
-  const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api"
+  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api"
 
   const [events, setEvents] = useState([])
 
   useEffect(() => {
     const fectchData = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_BACKEND_URL}/events/all`)
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/events/all`)
         setEvents(response.data)
       }
       catch (error) {
@@ -91,7 +91,7 @@ const EventManagement = () => {
 
     try {
       const response = await axios.put(
-        `${REACT_APP_BACKEND_URL}/events/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/events/${id}`,
         updatedEvent,  // Send full event details
         { headers: { "Content-Type": "application/json" } }
       );
