@@ -244,7 +244,7 @@ const EventManagement = () => {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put(`${REACT_APP_BACKEND_URL}/events/${editedEvent.id}`, editedEvent, {
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/events/${editedEvent.id}`, editedEvent, {
         headers: {
           "Content-Type": "application/json",
         }
@@ -335,7 +335,7 @@ const EventManagement = () => {
 
     try {
       const response = await axios.post(
-        `${REACT_APP_BACKEND_URL}/events/create`,
+        `${process.env.REACT_APP_BACKEND_URL}/events/create`,
         eventPayload,
         { headers: { "Content-Type": "application/json" } }
       );
