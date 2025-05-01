@@ -145,8 +145,6 @@ import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'r
 import Wrapper from './style';
 import axios from 'axios';
 
-const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
-
 const Dashboard = () => {
   const [selectedYearType, setSelectedYearType] = useState(); // 'current' or 'previous'
   const [chartData, setChartData] = useState([]);
@@ -173,9 +171,9 @@ const Dashboard = () => {
       try {
         const year = getDisplayYear();
 
-        const usersRes = await axios.get(`${REACT_APP_BACKEND_URL}/users/count?year=${selectedYearType}`);
-        const eventsRes = await axios.get(`${REACT_APP_BACKEND_URL}/events/count?year=${selectedYearType}`);
-        const connectionsRes = await axios.get(`${REACT_APP_BACKEND_URL}/connections/count?year=${selectedYearType}`);
+        const usersRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/count?year=${selectedYearType}`);
+        const eventsRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/events/count?year=${selectedYearType}`);
+        const connectionsRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/connections/count?year=${selectedYearType}`);
 
         const usersData = usersRes.data.data.map(item => ({
           month: getMonthName(item.month),

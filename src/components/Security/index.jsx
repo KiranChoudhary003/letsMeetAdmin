@@ -6,7 +6,7 @@ import axios from 'axios'
 
 const Security = () => {
 
-  const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
+  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
 
   const [isVisible, setIsVisible] = useState(null)
   const [isBlock, setIsBlock] = useState({})
@@ -15,7 +15,7 @@ const Security = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_BACKEND_URL}/users/block-status`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/block-status`);
         if (response.data && response.data.users) {
           const userResponse = response.data.users;
 
@@ -54,7 +54,7 @@ const Security = () => {
 
       try {
         // Send the PUT request with headers ensuring JSON format
-        await axios.put(`${REACT_APP_BACKEND_URL}/users/block-status`, {
+        await axios.put(`${process.env.REACT_APP_BACKEND_URL}/users/block-status`, {
           id: userId,
           block_status: newStatus
         }, {

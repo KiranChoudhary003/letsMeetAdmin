@@ -1,113 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Button } from "@mui/material";
 import Wrapper from "./style";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const attendees = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Speaker",
-    events: 5,
-    connections: 10,
-    preference: "Tech Talks",
-    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Attendee",
-    events: 3,
-    connections: 7,
-    preference: "Networking",
-    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
-  },
-  {
-    id: 3,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Speaker",
-    events: 5,
-    connections: 10,
-    preference: "Tech Talks",
-    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
-  },
-  {
-    id: 4,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Attendee",
-    events: 3,
-    connections: 7,
-    preference: "Networking",
-    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
-  },
-  {
-    id: 5,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Speaker",
-    events: 5,
-    connections: 10,
-    preference: "Tech Talks",
-    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
-  },
-  {
-    id: 6,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Attendee",
-    events: 3,
-    connections: 7,
-    preference: "Networking",
-    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
-  },
-  {
-    id: 7,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Speaker",
-    events: 5,
-    connections: 10,
-    preference: "Tech Talks",
-    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
-  },
-  {
-    id: 8,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Attendee",
-    events: 3,
-    connections: 7,
-    preference: "Networking",
-    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
-  },
-  {
-    id: 9,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Speaker",
-    events: 5,
-    connections: 10,
-    preference: "Tech Talks",
-    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
-  },
-  {
-    id: 10,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Attendee",
-    events: 3,
-    connections: 7,
-    preference: "Networking",
-    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
-  },
- 
-];
+
 const AttendeeManagement = () => {
+
+  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api"
+
+  const [attendees, setAttendees] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/stats`)
+
+        const formattedAttendees = response.data.data.map(user => ({
+          id: user.user_id,
+          name: `${user.first_name} ${user.last_name}`,
+          events: user.total_attended_events,
+          connections: user.total_connections
+        }))
+
+        setAttendees(formattedAttendees);
+      }
+      catch (error) {
+        console.log(`Error in fetching ${error}`)
+      }
+    }
+    fetchData()
+  }, [])
+
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
@@ -135,7 +60,7 @@ const AttendeeManagement = () => {
         </div>
       </div>
 
-      
+
 
       {/* Table */}
       <div className="table-container">
@@ -159,8 +84,8 @@ const AttendeeManagement = () => {
                   <td>{attendee.connections}</td>
                   <td>
                     <Button className="view-profile"
-                      onClick={() => navigate(`/attendeeManagement/profile/${attendee.id}`)}>
-                        View Profile</Button>
+                      onClick={() => navigate(`/attendeeManagement/profile/${attendee.id}`, {state : {attendee}})}>
+                      View Profile</Button>
                   </td>
                 </tr>
               ))

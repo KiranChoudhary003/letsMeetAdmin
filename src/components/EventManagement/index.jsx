@@ -9,39 +9,31 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaTimes } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
-
 import Wrapper from './style';
+import axios from 'axios';
 
+const EventManagement = () => {
 
-const EventTable = () => {
-  const [events, setEvents] = useState([
-    { id: 201, name: 'Tech Summit', startDate: '04-15-2025', endDate: '04-16-2025', venue: 'Hall A, near Jagatpura JTM Mall', description: 'AI Innovations', status: 'Enabled', updated: true },
-    { id: 202, name: 'Marketing Expo', startDate: '05-20-2025', endDate: '05-21-2025', venue: 'Hall B', description: 'Digital Marketing', status: 'Enabled', updated: true },
-    { id: 203, name: 'Startup Fest', startDate: '06-10-2025', endDate: '06-11-2025', venue: 'Hall C', description: 'Startup Networking', status: 'Enabled', updated: true },
-    { id: 204, name: 'Health Expo', startDate: '07-25-2025', endDate: '07-26-2025', venue: 'Hall D', description: 'Healthcare Tech', status: 'Enabled', updated: true },
-    { id: 205, name: 'AI Innovation', startDate: '08-15-2025', endDate: '08-16-2025', venue: 'Hall E', description: 'AI in Business', status: 'Disabled', updated: true },
-    { id: 206, name: 'Design Conference', startDate: '09-05-2025', endDate: '09-06-2025', venue: 'Hall F', description: 'Creative Designs', status: 'Enabled', updated: true },
-    { id: 207, name: 'Tech Forum', startDate: '10-10-2025', endDate: '10-11-2025', venue: 'Hall G', description: 'Technology Discussions', status: 'Enabled', updated: true },
-    { id: 208, name: 'AI Seminar', startDate: '11-12-2025', endDate: '11-13-2025', venue: 'Hall H', description: 'AI Trends and Innovations', status: 'Enabled', updated: true },
-    { id: 209, name: 'Cloud Tech Expo', startDate: '12-05-2025', endDate: '12-06-2025', venue: 'Hall I', description: 'Cloud Computing Solutions', status: 'Disabled', updated: true },
-    { id: 210, name: 'Blockchain Seminar', startDate: '01-15-2026', endDate: '01-16-2026', venue: 'Hall J', description: 'Blockchain Innovations', status: 'Enabled', updated: true },
-    { id: 211, name: 'Cyber Security Summit', startDate: '02-20-2026', endDate: '02-21-2026', venue: 'Hall K', description: 'Cyber Security Trends', status: 'Enabled', updated: true },
-    { id: 212, name: 'Digital Transformation Expo', startDate: '03-25-2026', endDate: '03-26-2026', venue: 'Hall L', description: 'Digital Business Solutions', status: 'Disabled', updated: true },
-    { id: 213, name: 'VR Tech Conference', startDate: '04-15-2026', endDate: '04-16-2026', venue: 'Hall M', description: 'Virtual Reality Innovations', status: 'Enabled', updated: true },
-    { id: 214, name: 'Robotics Expo', startDate: '05-10-2026', endDate: '05-11-2026', venue: 'Hall N', description: 'Robotic Automation Solutions', status: 'Enabled', updated: true },
-    { id: 215, name: 'Smart Tech Conference', startDate: '06-20-2026', endDate: '06-21-2026', venue: 'Hall O', description: 'Smart Technology Integration', status: 'Enabled', updated: true },
-    { id: 216, name: 'IoT Conference', startDate: '07-15-2026', endDate: '07-16-2026', venue: 'Hall P', description: 'Internet of Things Innovations', status: 'Disabled', updated: true },
-    { id: 217, name: 'Automation Summit', startDate: '08-10-2026', endDate: '08-11-2026', venue: 'Hall Q', description: 'Automation and AI Solutions', status: 'Enabled', updated: true },
-    { id: 218, name: 'Green Tech Expo', startDate: '09-05-2026', endDate: '09-06-2026', venue: 'Hall R', description: 'Sustainable Tech Innovations', status: 'Enabled', updated: true },
-    { id: 219, name: 'Space Tech Conference', startDate: '10-12-2026', endDate: '10-13-2026', venue: 'Hall S', description: 'Space Exploration Solutions', status: 'Disabled', updated: true },
-    { id: 220, name: 'Quantum Computing Seminar', startDate: '11-20-2026', endDate: '11-21-2026', venue: 'Hall T', description: 'Quantum Computing Trends', status: 'Enabled', updated: true }
-  ]);
+  const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api"
 
+  const [events, setEvents] = useState([])
 
+  useEffect(() => {
+    const fectchData = async () => {
+      try {
+        const response = await axios.get(`${REACT_APP_BACKEND_URL}/events/all`)
+        setEvents(response.data)
+      }
+      catch (error) {
+        console.log(`Error is fectching ${error}`)
+      }
+    }
+    fectchData()
+  }, [])
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEvents, setSelectedEvents] = useState([]);
-  const [showEvent, setShowEvent] = useState([]);
+  const [showEvent, setShowEvent] = useState(null);
   const [visibleEntries, setVisibleEntries] = useState(10);
   const [toggleMessage, setToggleMessage] = useState(null);
   const [editedEvent, setEditedEvent] = useState(null);
@@ -82,39 +74,71 @@ const EventTable = () => {
   }, [visibleEntries, handleScroll]); // Depend on visibleEntries to update properly
 
 
-  const handleToggle = (id) => {
+  const handleToggle = async (id) => {
+    const eventToUpdate = events.find(e => e.id === id);
+    if (!eventToUpdate) return;
+
+    // Toggle the status
+    const updatedStatus = eventToUpdate.status === "enable" ? "disable" : "enable";
+    const updatedEvent = { ...eventToUpdate, status: updatedStatus }; // Include all fields
+
+    // Optimistically update UI (Instant toggle effect)
     setEvents(prevEvents =>
       prevEvents.map(event =>
-        event.id === id
-          ? { ...event, status: event.status === "Enabled" ? "Disabled" : "Enabled" }
-          : event
+        event.id === id ? { ...event, status: updatedStatus, isLoading: true } : event
       )
     );
 
-    // Show message for the toggled event
-    setToggleMessage({ id, message: events.find(e => e.id === id)?.status === "Enabled" ? "Disabled" : "Enabled" });
+    try {
+      const response = await axios.put(
+        `${REACT_APP_BACKEND_URL}/events/${id}`,
+        updatedEvent,  // Send full event details
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-    // Hide the message after 2 seconds
-    setTimeout(() => setToggleMessage(null), 2000);
+      // Confirm backend response and update UI
+      setEvents(prevEvents =>
+        prevEvents.map(event =>
+          event.id === id ? { ...event, ...response.data, isLoading: false } : event
+        )
+      );
+
+      setToggleMessage({ id, message: `Event ${updatedStatus}!` });
+
+      // Hide the message after 2 seconds
+      setTimeout(() => setToggleMessage(null), 2000);
+
+      toast.success(`Event ${updatedStatus}!`);
+    } catch (error) {
+      console.error("Error updating event status:", error);
+      toast.error("Failed to update event status");
+
+      // Revert to previous state on error
+      setEvents(prevEvents =>
+        prevEvents.map(event =>
+          event.id === id ? { ...event, status: eventToUpdate.status, isLoading: false } : event
+        )
+      );
+    }
   };
-
-
-
-  const ToggleSlider = ({ id, isActive, onToggle }) => {
+  const ToggleSlider = ({ id, isActive, onToggle, isLoading }) => {
     return (
       <div className="toggle-wrapper">
         {toggleMessage?.id === id && (
           <div className="toggle-message">{toggleMessage.message}</div>
         )}
         <div
-          className={`toggle-switch ${isActive ? "enabled" : "disabled"}`}
-          onClick={() => onToggle(id)}
+          className={`toggle-switch ${isActive ? "enabled" : "disabled"} ${isLoading ? "loading" : ""}`}
+          onClick={!isLoading ? () => onToggle(id) : null} // Prevent click when loading
+          style={{ cursor: isLoading ? "not-allowed" : "pointer" }} // Visual feedback
         >
           <div className="switch-handle"></div>
         </div>
       </div>
     );
   };
+
+
 
   const handleSelectEvent = (id) => {
     setSelectedEvents((prev) =>
@@ -134,20 +158,30 @@ const EventTable = () => {
   const handleDelete = (id) => {
     confirmAlert({
       title: "Confirm Deletion",
-      message: "Are you sure you want to delete this role?",
+      message: "Are you sure you want to delete this event?",
       buttons: [
         {
           label: "Yes",
-          autoFocus: "Yes",
-          onClick: () => {
-            const updatedEvents = events
-              .filter(event => event.id !== id)
-              .map((event, index) => ({ ...event, id: index + 1 })); // Reassign IDs
+          onClick: async () => {
+            try {
+              // Call the backend API to delete the event
+              const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/events/${id}`);
 
-            setEvents(updatedEvents);
-            setSelectedEvents(prev => prev.filter(eventId => eventId !== id));
+              // Show confirmation message from API or fallback message
+              if (response.data && response.data.message) {
+                toast.success(response.data.message);
+              } else {
+                toast.success("Event deleted successfully!");
+              }
 
-            toast.success("Role deleted successfully!");
+              // Update local state by filtering out the deleted event
+              const updatedEvents = events.filter((event) => event.id !== id);
+              setEvents(updatedEvents);
+              setSelectedEvents((prev) => prev.filter((eventId) => eventId !== id));
+            } catch (error) {
+              console.error("Error deleting event:", error);
+              toast.error("Error deleting event. Please try again.");
+            }
           }
         },
         { label: "No" }
@@ -198,8 +232,6 @@ const EventTable = () => {
     }));
   };
 
-
-  // Helper function to format date to MM-DD-YYYY
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -210,12 +242,26 @@ const EventTable = () => {
   };
 
 
-  const handleSave = () => {
-    setEvents(prevEvents => prevEvents.map(event =>
-      event.id === editedEvent.id ? { ...editedEvent } : event
-    ));
-    setIsModalOpen(false); // Close modal after saving
-    toast.success("Successfully Edited!");
+  const handleSave = async () => {
+    try {
+      const response = await axios.put(`${REACT_APP_BACKEND_URL}/events/${editedEvent.id}`, editedEvent, {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      })
+
+      setEvents(prevEvents =>
+        prevEvents.map(event => (event.id === editedEvent.id ? response.data : event))
+      );
+
+      setIsModalOpen(false); // Close modal after saving
+      toast.success("Successfully Edited!");
+    }
+    catch (error) {
+      console.error("Error updating event:", error);
+      toast.error("Failed to update event");
+    }
+
   };
 
 
@@ -225,57 +271,103 @@ const EventTable = () => {
 
 
   const [newEvent, setNewEvent] = useState({
-    eventName: "",
-    startDate: "",
-    endDate: "",
+    name: "",
+    start_date_time: "",
+    end_date_time: "",
     venue: "",
     description: "",
-    status: "active",
+    status: "enable",
     latitude: "",
     longitude: "",
-    url: ""
+    web_page_url: ""
   });
 
 
   const handleAddEvent = () => {
     // Clear the newEvent state
     setNewEvent({
-      eventName: "",
-      startDate: null,
-      endDate: null,
+      name: "",
+      start_date_time: null,
+      end_date_time: null,
       venue: "",
       description: "",
-      status: "active",
+      status: "enable",
       latitude: "",
       longitude: "",
-      url: ""
+      web_page_url: ""
     });
 
     // Open the modal by setting isAddModalOpen to true
     setIsAddModalOpen(true);
   };
 
-  const handleSaveEvent = () => {
-    const { eventName, startDate, endDate, venue, description, latitude, longitude, url } = newEvent;
+  const handleSaveEvent = async () => {
+    const { name, start_date_time, end_date_time, venue, description, latitude, longitude, web_page_url } = newEvent;
 
     if (
-      !eventName.trim() ||
-      !(startDate instanceof Date) || isNaN(startDate.getTime()) ||
-      !(endDate instanceof Date) || isNaN(endDate.getTime()) ||
+      !name.trim() ||
+      !start_date_time ||
+      !(start_date_time instanceof Date) || isNaN(start_date_time.getTime()) ||
+      !end_date_time ||
+      !(end_date_time instanceof Date) || isNaN(end_date_time.getTime()) ||
       !venue.trim() ||
       !description.trim() ||
       !latitude.trim() ||
       !longitude.trim() ||
-      !url.trim()
+      !web_page_url.trim()
     ) {
       toast.error("All fields are required!");
       setIsAddModalOpen(true);
       return;
     }
-    setIsAddModalOpen(null);
-    toast.success("Event added successfully!");
-  }
 
+    const eventPayload = {
+      name: name,
+      description: description,
+      start_date_time: start_date_time.toISOString(),
+      end_date_time: end_date_time.toISOString(),
+      venue: venue,
+      latitude: latitude,
+      longitude: longitude,
+      web_page_url: web_page_url,
+      status: newEvent.status.trim()
+    };
+
+    try {
+      const response = await axios.post(
+        `${REACT_APP_BACKEND_URL}/events/create`,
+        eventPayload,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      // Show success message
+      if (response.data && response.data.message) {
+        toast.success(response.data.message);
+      } else {
+        toast.success("Event added successfully!");
+      }
+
+      setEvents((prevEvents) => [...prevEvents, response.data]);
+
+      setIsAddModalOpen(false);
+
+      setNewEvent({
+        name: "",
+        start_date_time: new Date(),
+        end_date_time: new Date(),
+        venue: "",
+        description: "",
+        status: "enable",
+        latitude: "",
+        longitude: "",
+        web_page_url: ""
+      });
+
+    } catch (error) {
+      console.error("Error adding event:", error.response ? error.response.data : error.message);
+      toast.error("Failed to add event. Please try again.");
+    }
+  }
 
   const handleDetails = (id) => {
     const eventToShow = events.find(event => event.id === id);
@@ -285,6 +377,28 @@ const EventTable = () => {
     } else {
       console.error("Event not found");
     }
+  };
+
+  const highlightMatch = (text, query) => {
+    if (!query) return text;
+
+    const lowerText = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+
+    const startIndex = lowerText.indexOf(lowerQuery);
+    if (startIndex === -1) return text;
+
+    const beforeMatch = text.slice(0, startIndex);
+    const matchText = text.slice(startIndex, startIndex + query.length);
+    const afterMatch = text.slice(startIndex + query.length);
+
+    return (
+      <>
+        {beforeMatch}
+        <strong>{matchText}</strong>
+        {afterMatch}
+      </>
+    );
   };
 
   return (
@@ -333,7 +447,7 @@ const EventTable = () => {
           </thead>
           <tbody className="table-body">
             {events.filter((event) =>
-              event.name.toLowerCase().includes(searchQuery.toLowerCase())
+              (event?.name?.toLowerCase() ?? "").includes((searchQuery?.toLowerCase() ?? ""))
             ).length === 0 ? (
               <tr>
                 <td colSpan="9" className="no-data-message">
@@ -354,16 +468,20 @@ const EventTable = () => {
                       />
                     </td>
                     <td className="column id">{event.id}</td>
-                    <td className="column name">{event.name}</td>
-                    <td className="column date">{event.startDate}</td>
-                    <td className="column date">{event.endDate}</td>
+                    <td className="column name">
+                      {highlightMatch(event.name, searchQuery)}
+                    </td>
+                    <td className="column date"> {new Date(event.start_date_time).toLocaleString()}</td>
+                    <td className="column date"> {new Date(event.end_date_time).toLocaleString()}</td>
                     <td className="column venue">{event.venue}</td>
                     <td className="column description">{event.description}</td>
                     <td className="column status">
                       <ToggleSlider
                         id={event.id}
-                        isActive={event.status === "Enabled"}
+                        isActive={event.status === "enable"}
                         onToggle={handleToggle}
+                        isLoading={event.isLoading}
+
                       />
                     </td>
                     <td className="column actions">
@@ -396,7 +514,7 @@ const EventTable = () => {
                 <DatePicker
                   name="startDate"
                   dateFormat="MM-dd-yyyy"
-                  selected={editedEvent?.startDate ? new Date(editedEvent.startDate) : null}
+                  selected={editedEvent?.start_date_time ? new Date(editedEvent.start_date_time) : null}
                   onChange={(date) => handleInputChange({ target: { name: "startDate", value: date } })}
                 />
               </div>
@@ -405,7 +523,7 @@ const EventTable = () => {
                 <DatePicker
                   name="endDate"
                   dateFormat="MM-dd-yyyy"
-                  selected={editedEvent?.endDate ? new Date(editedEvent.endDate) : null}
+                  selected={editedEvent?.end_date_time ? new Date(editedEvent.end_date_time) : null}
                   onChange={(date) => handleInputChange({ target: { name: "endDate", value: date } })}
                 />
               </div>
@@ -444,8 +562,8 @@ const EventTable = () => {
             <input
               type="text"
               name="eventName"
-              value={newEvent.eventName}
-              onChange={(e) => setNewEvent({ ...newEvent, eventName: e.target.value })}
+              value={newEvent.name}
+              onChange={(e) => setNewEvent({ ...newEvent, name: e.target.value.toLowerCase() || '' })}
             />
             <div className='dateEvent'>
               <div>
@@ -453,8 +571,8 @@ const EventTable = () => {
                 <DatePicker
                   name="endDate"
                   dateFormat="MM-dd-yyyy"
-                  selected={newEvent.startDate} // Use 'selected' instead of 'value'
-                  onChange={(date) => setNewEvent({ ...newEvent, startDate: date })} // 'date' is the selected Date object
+                  selected={newEvent.start_date_time} // Use 'selected' instead of 'value'
+                  onChange={(date) => setNewEvent({ ...newEvent, start_date_time: date })} // 'date' is the selected Date object
                 />
               </div>
               <div>
@@ -462,8 +580,8 @@ const EventTable = () => {
                 <DatePicker
                   name="endDate"
                   dateFormat="MM-dd-yyyy"
-                  selected={newEvent.endDate} // Use 'selected' instead of 'value'
-                  onChange={(date) => setNewEvent({ ...newEvent, endDate: date })} // 'date' is the selected Date object
+                  selected={newEvent.end_date_time} // Use 'selected' instead of 'value'
+                  onChange={(date) => setNewEvent({ ...newEvent, end_date_time: date })} // 'date' is the selected Date object
                 />
               </div>
             </div>
@@ -473,14 +591,14 @@ const EventTable = () => {
               type="text"
               name="venue"
               value={newEvent.venue}
-              onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })}
+              onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value.toLowerCase() || '' })}
             />
 
             <label>Description:</label>
             <textarea
               name="description"
               value={newEvent.description}
-              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value.toLowerCase() || '' })}
             ></textarea>
 
             <label>Status:</label>
@@ -513,8 +631,8 @@ const EventTable = () => {
             <input
               type="text"
               name="url"
-              value={newEvent.url}
-              onChange={(e) => setNewEvent({ ...newEvent, url: e.target.value })}
+              value={newEvent.web_page_url}
+              onChange={(e) => setNewEvent({ ...newEvent, web_page_url: e.target.value.toLowerCase() || '' })}
             />
 
             <div className="modal-buttons">
@@ -532,8 +650,8 @@ const EventTable = () => {
             <h2 className="event-modal-title">Event Details</h2>
             <div className="event-modal-body">
               <p><strong>Name:</strong> {showEvent.name}</p>
-              <p><strong>Start Date:</strong> {showEvent.startDate}</p>
-              <p><strong>End Date:</strong> {showEvent.endDate}</p>
+              <p><strong>Start Date:</strong> {new Date(showEvent.start_date_time).toLocaleDateString()}</p>
+              <p><strong>End Date:</strong> {new Date(showEvent.end_date_time).toLocaleDateString()}</p>
               <p><strong>Venue:</strong> {showEvent.venue}</p>
               <p><strong>Description:</strong> {showEvent.description}</p>
             </div>
@@ -548,4 +666,4 @@ const EventTable = () => {
   );
 };
 
-export default EventTable;
+export default EventManagement;

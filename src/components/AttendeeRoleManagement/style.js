@@ -127,7 +127,7 @@ const Wrapper = styled.div`
     justify-content : space-around;
     height : 100%;
     align-items : center;
-    border-bottom : none;
+    border-bottom : 1px solid #ccc;
     align-self : center;
   }
   
@@ -316,6 +316,35 @@ const Wrapper = styled.div`
   .search-input {
     width: 100%; /* Full width on smaller screens */
   }
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  position: relative;
+}
+  .button-class{
+  display : flex;
+  gap : 10px;
+  width : 190px;
+}
+  .add-btn {
+  display: flex;          /* Enables flexbox */
+  align-items: center;    /* Aligns text and icon in center vertically */
+  justify-content: center; /* Centers content horizontally */
+  background-color: rgb(177, 179, 215); /* Button color */
+  color: black;           /* Text color */
+  font-size: 16px;        /* Adjust text size */
+  font-weight: bold;      /* Make text bold */
+  border: none;           /* Removes border */
+  padding: 8px 15px;      /* Adds space inside the button */
+  border-radius: 5px;     /* Smooth rounded corners */
+  cursor: pointer;        /* Cursor pointer for interaction */
+  gap: 5px;
+  position : fixed;
+  margin-left : 80px;
 }
   `;
 export default Wrapper;

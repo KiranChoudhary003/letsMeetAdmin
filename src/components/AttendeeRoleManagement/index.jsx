@@ -189,12 +189,33 @@ const AttendeeRoleManagement = () => {
         setIsVisible(null);
     };
 
+    const highlightMatch = (text, query) => {
+        if (!query) return text;
+
+        const lowerText = text.toLowerCase();
+        const lowerQuery = query.toLowerCase();
+
+        const startIndex = lowerText.indexOf(lowerQuery);
+        if (startIndex === -1) return text;
+
+        const beforeMatch = text.slice(0, startIndex);
+        const matchText = text.slice(startIndex, startIndex + query.length);
+        const afterMatch = text.slice(startIndex + query.length);
+
+        return (
+            <>
+                {beforeMatch}
+                <strong>{matchText}</strong>
+                {afterMatch}
+            </>
+        );
+    };
 
     return (
         <Wrapper>
             <div className='wrapper'>
                 <section className='events'>
-                    <h1>User Roles</h1>
+                    <h1>Attendee Roles</h1>
                     <div>
                         <div className="search-container">
                             <input
@@ -255,7 +276,9 @@ const AttendeeRoleManagement = () => {
                                                 />
                                             </td>
                                             <td className="column id">{event.id}</td>
-                                            <td className="column name">{event.role}</td>
+                                            <td className="column name">
+                                                {highlightMatch(event.role, searchQuery)}
+                                            </td>
                                             <td className="column actions">
                                                 <p className="edit-btn" onClick={() => handleEdit(event.id)}>
                                                     <FaEdit />

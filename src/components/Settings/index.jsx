@@ -4,19 +4,19 @@ import { ToggleSlider } from 'react-toggle-slider';
 import axios from 'axios';
 
 const Settings = () => {
-  const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
+  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
 
   const [settings, setSettings] = useState({
     enabled: false,
     check_in_distance: ""
-  });
+  })
 
   // Fetch initial settings from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const connectionRes = await axios.get(`${REACT_APP_BACKEND_URL}/settings/connection-status`);
-        const distanceRes = await axios.get(`${REACT_APP_BACKEND_URL}/settings/check-in-distance`);
+        const connectionRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/settings/connection-status`);
+        const distanceRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/settings/check-in-distance`);
 
         setSettings({
           enabled: Boolean(connectionRes.data.connections_enabled),
@@ -40,7 +40,7 @@ const Settings = () => {
     }));
   
     try {
-      await axios.put(`${REACT_APP_BACKEND_URL}/settings/connection-status`, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/settings/connection-status`, {
         enabled: newStatus
       }, {
         headers: { "Content-Type": "application/json" }
@@ -79,12 +79,12 @@ const Settings = () => {
       console.log("Sending check-in distance:", distanceData);
   
       // Send the updated connection status
-      await axios.put(`${REACT_APP_BACKEND_URL}/settings/connection-status`, connectionStatusData, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/settings/connection-status`, connectionStatusData, {
         headers: { "Content-Type": "application/json" }
       });
   
       // Send the updated check-in distance
-      await axios.put(`${REACT_APP_BACKEND_URL}/settings/check-in-distance`, distanceData, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/settings/check-in-distance`, distanceData, {
         headers: { "Content-Type": "application/json" }
       });
   
