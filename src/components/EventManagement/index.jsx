@@ -14,8 +14,6 @@ import axios from 'axios';
 
 const EventManagement = () => {
 
-  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api"
-
   const [events, setEvents] = useState([])
 
   useEffect(() => {
@@ -188,32 +186,40 @@ const EventManagement = () => {
       ]
     });
   };
-
-  const handleMassDelete = () => {
+  const handleMassDelete = async () => {
     if (selectedEvents.length === 0) {
-      toast.warn("No roles selected for deletion!");
+      toast.warn("No events selected for deletion!");
       return;
     }
+  
     confirmAlert({
       title: "Confirm Deletion",
-      message: `Are you sure you want to delete ${selectedEvents.length} role(s)?`,
+      message: `Are you sure you want to delete ${selectedEvents.length} event(s)?`,
       buttons: [
         {
           label: "Yes",
-          autoFocus: "Yes",
-          onClick: () => {
-            const updatedEvents = events
-              .filter(role => !selectedEvents.includes(role.id)) // Remove selected roles
-              .map((role, index) => ({ ...role, id: index + 1 })); // Reassign IDs
-            setEvents(updatedEvents);
-            setSelectedEvents([]); // Reset selection
-            toast.success(`${selectedEvents.length} role(s) deleted successfully!`);
+          autoFocus: true,
+          onClick: async () => {
+            try {
+              await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/events/deletemass`,
+                { ids: selectedEvents }
+              );
+  
+              const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
+              setEvents(updatedEvents);
+              setSelectedEvents([]); // Clear selected
+              toast.success(`${selectedEvents.length} event(s) deleted successfully!`);
+            } catch (error) {
+              console.error("Mass delete error:", error.response?.data || error.message);
+              toast.error("Failed to delete events.");
+            }
           }
         },
         { label: "No" }
       ]
     });
-  };
+  };  
 
   const handleEdit = (id) => {
     const eventToEdit = events.find(event => event.id === id);

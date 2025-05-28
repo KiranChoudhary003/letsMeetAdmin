@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Pencil, Trash, Eye, EyeOff } from "lucide-react"; // Importing icons
 import Wrapper from "./style";
-import { FaEdit } from "react-icons/fa"
+import { FaEdit, FaEye } from "react-icons/fa"
 import { MdDelete } from "react-icons/md";
 import { Search } from "lucide-react";
 import axios from "axios";
@@ -10,15 +10,12 @@ import { toast } from "react-toastify";
 
 const UserManagement = () => {
 
-  // const REACT_APP_BACKEND_URL = "https://letsmeet-backend-47lv.onrender.com/api"
-
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`);
-        // Map the response data to the desired format.
         const formattedUsers = response.data.map(user => ({
           id: user.id,
           first_name: user.first_name?.trim() || "",
@@ -28,7 +25,7 @@ const UserManagement = () => {
           role: user.attendees_role || "N/A",
           status: user.status
             ? user.status.charAt(0).toUpperCase() + user.status.slice(1)
-            : "N/A",
+            : "Inactive",
           password_hash: user.password_hash || "••••••••",
           selected: false,
           showPassword: false,
@@ -91,12 +88,13 @@ const UserManagement = () => {
       last_name: currentUser.last_name || "",
       username: currentUser.username || "",
       email: currentUser.email || "",
-      password: currentUser.password || "", // Only required for POST
-      role_id: currentUser.role_id || 3, // Default to 'user'
-      attendees_role: currentUser.attendees_role || "",
-      photo: currentUser.photo || "",
+      password: currentUser.password || "",
+      role_id: Number(currentUser.role_id) || 3,
+      attendees_role: currentUser.role || "",
+      photo: currentUser.photo || "", // if available, else leave as ""
       linkedin_url: currentUser.linkedin_url || "",
     };
+
 
     console.log("Sending Data:", userData); // ✅ Check this in browser console
 
@@ -125,15 +123,14 @@ const UserManagement = () => {
       closeModal();
     } catch (error) {
       console.error("Error:", error);
-      alert(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`);
     }
-  };
+  }
 
-  // const handleDelete = (id) => window.confirm("Are you sure you want to delete this user?") && updateUsers(users.filter(user => user.id !== id));
   const handleDelete = (id) => {
     confirmAlert({
       title: "Confirm Deletion",
-      message: "Are you sure you want to delete this event?",
+      message: "Are you sure you want to delete this user?",
       buttons: [
         {
           label: "Yes",
@@ -151,8 +148,8 @@ const UserManagement = () => {
               setUsers(updatedUsers)
             }
             catch (error) {
-              console.error("Error deleting event:", error);
-              toast.error("Error deleting event. Please try again.");
+              console.error("Error deleting user:", error);
+              toast.error("Error deleting user. Please try again.");
             }
           }
         },
@@ -161,15 +158,74 @@ const UserManagement = () => {
     })
   }
 
-  const handleBulkDelete = () => window.confirm("Are you sure you want to delete the selected users?") && updateUsers(users.filter(user => !user.selected));
+  // const handleBulkDelete = (ids) => window.confirm("Are you sure you want to delete the selected users?") && updateUsers(users.filter(user => !user.selected));
+  const handleBulkDelete = () => {
+    const selectedIds = users.filter(user => user.selected).map(user => user.id);
 
-  const handleResetPassword = () => {
-    if (window.confirm(`Are you sure you want to reset ${currentUser.name}'s password?`)) {
-      alert(`Password reset successful for ${currentUser.name}. New password: ${newPassword}`);
-      setNewPassword("");
-      closeModal();
+    if (selectedIds.length === 0) return;
+
+    confirmAlert({
+      title: "Confirm Delete",
+      message: `Are you sure you want to delete ${selectedIds.length} user(s)?`,
+      buttons: [
+        {
+          label: "Yes",
+          onClick: async () => {
+            try {
+              const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/users/deletemass`,
+                { ids: selectedIds } // Adjust to match your backend format
+              );
+
+              // ✅ Remove deleted users from local state
+              setUsers(prevUsers => prevUsers.filter(user => !selectedIds.includes(user.id)));
+
+              alert("Users deleted successfully");
+            } catch (error) {
+              console.error("Bulk delete error:", error.response?.data || error.message);
+              alert("Failed to delete users.");
+            }
+          }
+        },
+        {
+          label: "No"
+        }
+      ]
+    });
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.trim().length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
+
+    if (!window.confirm("Are you sure you want to reset the password?")) return;
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${currentUser.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ password: newPassword }) // ✅ Only send password
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to reset password.");
+      }
+
+      alert("Password has been reset successfully.");
+      setNewPassword(""); // clear the input
+      closeModal();       // close modal
+    } catch (error) {
+      console.error("Reset Password Error:", error);
+      alert(`Error: ${error.message}`);
     }
   };
+
 
   const openModal = (type, user = {}) => (setModalType(type), setCurrentUser(user));
 
@@ -267,7 +323,7 @@ const UserManagement = () => {
                   <td>
                     <div className="button">
                       <button className="reset-btn" onClick={() => openModal("reset-password", user)}>
-                        Reset Password
+                        <FaEye />
                       </button>
 
                       <button className="edit-btn" onClick={() => openModal("edit", user)}>
@@ -284,24 +340,29 @@ const UserManagement = () => {
         </table>
       </div>
 
-
       {
         modalType === "add" ? (
           <div className="modal">
             <div className="modal-content">
               <h3>Add User</h3>
-              <input type="text" placeholder="First Name" value={currentUser.first_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })} />
+              <input type="text" placeholder="First Name" value={currentUser.first_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })} required />
               <input type="text" placeholder="Middle Name" value={currentUser.middle_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, middle_name: e.target.value })} />
-              <input type="text" placeholder="Last Name" value={currentUser.last_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })} />
-              <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
-              <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
+              <input type="text" placeholder="Last Name" value={currentUser.last_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })} required />
               <input
                 type="text"
-                value={`Role ID - ${currentUser.role_id || 3}`}
+                placeholder="Username"
+                value={currentUser.username || ""}
+                onChange={(e) => setCurrentUser({ ...currentUser, username: e.target.value })}
+              />
+              <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} required />
+              <input type="password" placeholder="Password" value={currentUser.password || ""} onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })} required />
+              <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} required />
+              <input
+                type="text"
+                value={`${currentUser.role_id ?? 3}`}
                 readOnly
               />
-              <input type="text" placeholder="LinkedIn URL" value={currentUser.linkedin_url || ""} onChange={(e) => setCurrentUser({ ...currentUser, linkedin_url: e.target.value })} />
-              <input type="password" placeholder="Password" value={currentUser.password || ""} onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })} />
+              <input type="text" placeholder="LinkedIn URL" value={currentUser.linkedin_url || ""} onChange={(e) => setCurrentUser({ ...currentUser, linkedin_url: e.target.value })} required />
               <button onClick={handleSaveUser} className="submit-btn">Save</button>
               <button className="close-btn" onClick={closeModal}>&times;</button>
             </div>
@@ -316,6 +377,7 @@ const UserManagement = () => {
               <input type="text" placeholder="Middle Name" value={currentUser.middle_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, middle_name: e.target.value })} />
               <input type="text" placeholder="Last Name" value={currentUser.last_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })} />
               <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
+              <input type="password" placeholder="Password" value={currentUser.password || ""} onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })} required />
               <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
               <input type="text" placeholder="LinkedIn URL" value={currentUser.linkedin || ""} onChange={(e) => setCurrentUser({ ...currentUser, linkedin: e.target.value })} />
               <button onClick={handleSaveUser} className="submit-btn">Save</button>
@@ -327,9 +389,10 @@ const UserManagement = () => {
       {modalType === "reset-password" && (
         <div className="modal">
           <div className="modal-content">
-            <h3>Reset Password for {currentUser.name}</h3>
-            <input type="password" placeholder="Enter New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-            <button onClick={handleResetPassword} className="submit-btn">Reset Password</button>
+            <h3>{currentUser.first_name} Details</h3>
+            <p><strong>Name:</strong> {currentUser.first_name} {currentUser.middle_name} {currentUser.last_name}</p>
+            <p><strong>Email:</strong> {currentUser.email}</p>
+            <p><strong>Role:</strong> {currentUser.role}</p>
             <button className="close-btn" onClick={closeModal}>&times;</button>
           </div>
         </div>

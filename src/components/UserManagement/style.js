@@ -126,42 +126,43 @@ const Wrapper = styled.section`
 
 
  .edit-btn {
-  color: black;
-  border: none;
-  border-radius: 5px; /* Rounded corners */
-  padding: 8px 12px;
-  transition: background 0.3s ease-in-out;
-  margin-right: 5px; /* Spacing between buttons */
-}
+    background : white;
+    color: black;
+    font-size : 20px;
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    padding: 8px 5px 0;
+    transition: background 0.3s ease-in-out;
+    margin-right: 5px; /* Spacing between buttons */
+  }
 
 
 .delete-btn {
-  background: #dc3545;
-  color: white;
+  background: white;
+  font-size : 20px;
+  color: rgb(244, 67, 54);
   border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  transition: background 0.3s ease-in-out;
+  padding: 8px 5px 0;
   margin-right: 5px;
 }
 
-.delete-btn:hover {
-  background: #c82333;
-}
+// .delete-btn:hover {
+//   background: white;
+//   color: rgb(244, 67, 54);
+// }
 
 .reset-btn {
-  background: #28a745;
-  color: white;
+  font-size : 20px;
+  background : white;
+  color: darkblue;
   border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  transition: background 0.3s ease-in-out;
+  padding: 8px 5px 0;
   margin-right: 5px;
 }
 
-.reset-btn:hover {
-  background: #1e7e34;
-}
+// .reset-btn:hover {
+//   background: #1e7e34;
+// }
 
 /* Add spacing between buttons inside the actions column */
 .actions {
@@ -187,9 +188,6 @@ const Wrapper = styled.section`
   color: red;
   font-weight: bold;
 }
-
-
-
 
 /* 🏷️ Toggle Button Styling */
 .toggle-btn {
@@ -298,12 +296,10 @@ input {
 }
 
 .modal-content.reset-password {
-  width: 380px;
-  min-height: 220px;
+  width: 300px;
+  height: 150px;
 }
-
-
-
+  
 `;
 
 export default Wrapper;

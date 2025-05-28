@@ -10,11 +10,11 @@
 
 //   // Find attendee by ID
 //   const attendee = attendees.find((a) => a.id === parseInt(id));
-  
+
 //   const [selectedEvent, setSelectedEvent] = useState(null);
-  
-   
-  
+
+
+
 
 //   if (!attendee) {
 //     return (
@@ -47,7 +47,7 @@
 //           <div> <h2 className="profile-header">Attendee Profile</h2></div>
 //           {/* Profile Details */}
 //           <div className="profile-details">
-         
+
 
 //             <div className="profile-info"><strong>ID:</strong> {attendee.id}</div>
 //             <div className="profile-info"><strong>Name:</strong> {attendee.name}</div>
@@ -56,7 +56,7 @@
 //             <div className="profile-info"><strong>Preference:</strong> {attendee.preference || "None"}</div>
 //             <div className="profile-info"><strong>Total Events:</strong> {attendee.events}</div>
 //             <div className="profile-info"><strong>Total Connections:</strong> {attendee.connections}</div>
-           
+
 //             <button className="back-button" onClick={() => navigate(-1)}>Go Back</button>
 //           </div>
 //         </div>
@@ -108,11 +108,11 @@
 //               <p>No Connections Available</p>
 //             )}
 //             <button className="close-modal-btn" onClick={() => setSelectedEvent(null)}>❌</button>
-            
+
 //           </div>
-          
+
 //         </div>
-        
+
 //       )}
 //     </Wrapper>
 //   );
@@ -122,6 +122,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Wrapper from "./ProfilePagecss.js";
+import { constructNow } from "date-fns";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -129,6 +130,8 @@ const ProfilePage = () => {
   const location = useLocation();
   const [attendee, setAttendee] = useState(location.state?.attendee || null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventList, setEventList] = useState([]);
+
 
   useEffect(() => {
     if (!attendee) {
@@ -144,6 +147,35 @@ const ProfilePage = () => {
       fetchAttendee();
     }
   }, [id, attendee]);
+
+  useEffect(() => {
+    if (!id) return; // guard clause
+
+    const fetchEventList = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/attended-events/${id}`);
+        const data = await response.json();
+        console.log("Fetched Events:", data.events);
+        setEventList(data.events);
+      } catch (error) {
+        console.error("Error fetching attended events:", error);
+      }
+    };
+
+    fetchEventList();
+  }, [id]);
+
+  // useEffect(() => {
+  //   if(!id, !attendee) return
+
+  //   const fetchConnectionList = async () => {
+  //     try { 
+  //       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${attendee.id}/${id}`)
+  //       const data = await response.json()
+  //       console.log()
+  //     }
+  //   }
+  // })
 
   if (!attendee) {
     return (
@@ -193,7 +225,7 @@ const ProfilePage = () => {
 
       <div className="event-list-container">
         <h3 className="event-list-title">Events Attended</h3>
-        {attendee.eventList && attendee.eventList.length > 0 ? (
+        {eventList && eventList.length > 0 ? (
           <table className="event-table">
             <thead>
               <tr>
@@ -203,12 +235,15 @@ const ProfilePage = () => {
               </tr>
             </thead>
             <tbody>
-              {attendee.eventList.map((event, index) => (
+              {eventList.map((event, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{event.name}</td>
                   <td>
-                    <button className="view-connection-btn" onClick={() => setSelectedEvent(event)}>
+                    <button
+                      className="view-connection-btn"
+                      onClick={() => setSelectedEvent(event)}
+                    >
                       View Connection
                     </button>
                   </td>

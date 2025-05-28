@@ -163,7 +163,7 @@ const Wrapper = styled.div`
   }
   
   .delete-btn {
-    color: rgb(244, 67, 54);;
+    color: rgb(244, 67, 54);
     font-size : 20px;
     border-bottom : none;
   }

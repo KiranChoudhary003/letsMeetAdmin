@@ -9,42 +9,30 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaSearch } from "react-icons/fa";
 
 import Wrapper from './style';
+import axios, { Axios } from 'axios';
 
 const AttendeeRoleManagement = () => {
-    const [roles, setRoles] = useState([
-        { id: 1, role: "Architect" },
-        { id: 2, role: "Business Analyst" },
-        { id: 3, role: "Consultant" },
-        { id: 4, role: "Contractor" },
-        { id: 5, role: "Developer" },
-        { id: 6, role: "Executive" },
-        { id: 7, role: "Project Manager" },
-        { id: 8, role: "Regional Manager" },
-        { id: 9, role: "Resource Manager" },
-        { id: 10, role: "Sales Associate" },
-        { id: 11, role: "Senior Consultant" },
-        { id: 12, role: "Senior Developer" },
-        { id: 13, role: "Services Lead" },
-        { id: 14, role: "Trainer" },
-        { id: 15, role: "Training Manager" },
-        { id: 16, role: "Team Lead" },
-        { id: 17, role: "Delivery Manager" },
-        { id: 18, role: "Operations Manager" },
-        { id: 19, role: "Technical Consultant" },
-        { id: 20, role: "Solution Architect" },
-        { id: 21, role: "IT Manager" },
-        { id: 22, role: "Business Development Manager" },
-        { id: 23, role: "Product Manager" },
-        { id: 24, role: "Customer Success Manager" },
-        { id: 25, role: "Implementation Specialist" }
-    ]);
+    const [roles, setRoles] = useState([]);
 
+    useEffect(() => {
+        const fectchData = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/attendee/roles`)
+                const data = await response.json()
+                setRoles(data.roles)
+            }
+            catch (error) {
+                console.log(`Error is fectching ${error}`)
+            }
+        }
+        fectchData()
+    }, [])
 
     const [searchQuery, setSearchQuery] = useState("");
     const [visibleEntries, setVisibleEntries] = useState(10);
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editedEvent, setEditedEvent] = useState(null);
+    const [editedRoles, setEditedRoles] = useState(null);
     const [isVisible, setIsVisible] = useState(null);
     const [newRole, setNewRole] = useState(""); // Ensure it's initialized as a string
 
@@ -70,9 +58,6 @@ const AttendeeRoleManagement = () => {
         return () => tableElement.removeEventListener('scroll', handleScroll);
     }, [visibleEntries, handleScroll]);
 
-
-
-
     const handleSelectEvent = (id) => {
         setSelectedRoles((prevSelected) =>
             prevSelected.includes(id)
@@ -96,23 +81,41 @@ const AttendeeRoleManagement = () => {
 
 
     const handleEdit = (id) => {
-        const eventToEdit = roles.find((event) => event.id === id);
-        setEditedEvent(eventToEdit);
+        const rolesEdit = roles.find((role) => role.id === id);
+        setEditedRoles(rolesEdit);
         setIsModalOpen(true);
     };
 
     const handleInputChange = (field, value) => {
-        setEditedEvent((prev) => ({ ...prev, [field]: value }));
+        setEditedRoles((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleSave = () => {
-        setRoles((prevRoles) =>
-            prevRoles.map((role) =>
-                role.id === editedEvent.id ? { ...role, role: editedEvent.role } : role
-            )
-        );
-        setIsModalOpen(false);
-        toast.success("Successfully Edited!");
+    const handleSave = async () => {
+        try {
+            const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/users/attendee/roles/${editedRoles.id}`, editedRoles, {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+
+            setRoles(prevRoles =>
+                prevRoles.map(role => (role.id === editedRoles.id ? response.data : role))
+            );
+
+            setIsModalOpen(false); // Close modal after saving
+            toast.success("Successfully Edited!");
+        }
+        catch (error) {
+            console.error("Error updating role:", error);
+            toast.error("Failed to update role");
+        }
+        // setRoles((prevRoles) =>
+        //     prevRoles.map((role) =>
+        //         role.id === editedRoles.id ? { ...role, role: editedRoles.role } : role
+        //     )
+        // );
+        // setIsModalOpen(false);
+        // toast.success("Successfully Edited!");
     };
 
     const handleDelete = (id) => {
@@ -123,24 +126,37 @@ const AttendeeRoleManagement = () => {
                 {
                     label: "Yes",
                     autoFocus: "Yes",
-                    onClick: () => {
-                        const updatedRoles = roles
-                            .filter(role => role.id !== id)
-                            .map((role, index) => ({ ...role, id: index + 1 })); // Reassign IDs
+                    onClick: async () => {
+                        try {
+                            const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/users/attendee/roles/${id}`)
 
-                        setRoles(updatedRoles);
-                        setSelectedRoles(prev => prev.filter(eventId => eventId !== id));
+                            if (response.data && response.data.message) {
+                                toast.success(response.data.message)
+                            } else {
+                                toast.success("Role Deleted Successfully ")
+                            }
 
-                        toast.success("Role deleted successfully!");
+                            const updatedRoles = roles.filter((role) => role.id !== id);
+                            setRoles(updatedRoles);
+                            setSelectedRoles((prev) => prev.filter((roleID) => roleID !== id));
+                        }
+                        catch (error) {
+                            console.error("Error deleting event:", error);
+                            toast.error("Error deleting event. Please try again.");
+                        }                        // const updatedRoles = roles
+                        //     .filter(role => role.id !== id)
+                        //     .map((role, index) => ({ ...role, id: index + 1 })); // Reassign IDs
+
+                        // setRoles(updatedRoles);
+                        // setSelectedRoles(prev => prev.filter(eventId => eventId !== id));
+
+                        // toast.success("Role deleted successfully!");
                     }
                 },
                 { label: "No" }
             ]
         });
     };
-
-
-
 
     const handleMassDelete = () => {
         if (selectedRoles.length === 0) {
@@ -173,17 +189,45 @@ const AttendeeRoleManagement = () => {
     };
 
 
-    const handleAddRole = () => {
-        if (typeof newRole !== "string" || newRole.trim() === "") {
-            toast.error("Role name cannot be empty!");
-            return;
+    const handleAddRole = async () => {
+
+        const role_name = newRole.role_name
+
+        if (!role_name.trim()) {
+            toast.error('Fill the required Role name')
+            setIsModalOpen(true)
+            return
         }
-        setNewRole("");
-        setIsVisible(null);
-        toast.success("Role added successfully!");
-    };
 
+        const rolePayload = {role_name}
 
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/users/attendee/roles`, rolePayload, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if (response.data && response.data.message) {
+                toast.success(response.data.message)
+            } else {
+                toast.success("Role added successfully!")
+            }
+
+            setRoles((prevRoles) => [...prevRoles, response.data])
+
+            setIsModalOpen(false)
+
+            setNewRole({
+                role_name : ""
+            })
+
+        } catch (error) {
+            console.error("Error adding role:", error.response ? error.response.data : error.message);
+            toast.error("Failed to add role. Please try again.");
+        }
+    }
+    
     const handleCancel = () => {
         setIsModalOpen(false);
         setIsVisible(null);
@@ -252,8 +296,8 @@ const AttendeeRoleManagement = () => {
                             </tr>
                         </thead>
                         <tbody className="table-body">
-                            {roles.filter((event) =>
-                                event.role.toLowerCase().includes(searchQuery.toLowerCase())
+                            {roles.filter((role) =>
+                                role.role_name.toLowerCase().includes(searchQuery.toLowerCase())
                             ).length === 0 ? (
                                 <tr>
                                     <td colSpan="4" className="no-data-message">
@@ -262,28 +306,28 @@ const AttendeeRoleManagement = () => {
                                 </tr>
                             ) : (
                                 roles
-                                    .filter((event) =>
-                                        event.role.toLowerCase().includes(searchQuery.toLowerCase())
+                                    .filter((role) =>
+                                        role.role_name.toLowerCase().includes(searchQuery.toLowerCase())
                                     )
                                     .slice(0, visibleEntries)
-                                    .map((event) => (
-                                        <tr key={event.id} className="table-row">
+                                    .map((role) => (
+                                        <tr key={role.id} className="table-row">
                                             <td className="column checkbox">
                                                 <input
                                                     type="checkbox"
-                                                    checked={selectedRoles.includes(event.id)}
-                                                    onChange={() => handleSelectEvent(event.id)}
+                                                    checked={selectedRoles.includes(role.id)}
+                                                    onChange={() => handleSelectEvent(role.id)}
                                                 />
                                             </td>
-                                            <td className="column id">{event.id}</td>
+                                            <td className="column id">{role.id}</td>
                                             <td className="column name">
-                                                {highlightMatch(event.role, searchQuery)}
+                                                {highlightMatch(role.role_name, searchQuery)}
                                             </td>
                                             <td className="column actions">
-                                                <p className="edit-btn" onClick={() => handleEdit(event.id)}>
+                                                <p className="edit-btn" onClick={() => handleEdit(role.id)}>
                                                     <FaEdit />
                                                 </p>
-                                                <p className="delete-btn" onClick={() => handleDelete(event.id)}>
+                                                <p className="delete-btn" onClick={() => handleDelete(role.id)}>
                                                     <MdDelete />
                                                 </p>
                                             </td>
@@ -296,7 +340,7 @@ const AttendeeRoleManagement = () => {
                     </table>
                 </section>
 
-                {isModalOpen && editedEvent && (
+                {isModalOpen && editedRoles && (
                     <div className="modal">
                         <div className="modal-content">
                             <h2>Edit Role</h2>
@@ -304,8 +348,8 @@ const AttendeeRoleManagement = () => {
                             <input
                                 type="text"
                                 name="role"
-                                value={editedEvent?.role || ""}
-                                onChange={(e) => handleInputChange("role", e.target.value)}
+                                value={editedRoles?.role_name || ""}
+                                onChange={(e) => handleInputChange("role_name", e.target.value)}
                             />
                             <div className="modal-buttons">
                                 <button onClick={handleSave}>Save</button>
@@ -322,8 +366,8 @@ const AttendeeRoleManagement = () => {
                             <input
                                 type="text"
                                 placeholder="Enter Role Name"
-                                value={newRole}
-                                onChange={(e) => setNewRole(e.target.value)}
+                                value={newRole.role_name}
+                                onChange={(e) => setNewRole({ ...newRole, role_name: e.target.value.toLowerCase() || '' })}
                             />
 
                             <div className="modal-buttons">
