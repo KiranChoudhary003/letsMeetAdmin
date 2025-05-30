@@ -207,7 +207,7 @@ const attendees = [
     preference: "Networking",
     profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
   },
- 
+
 ];
 const AttendeeManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -219,25 +219,25 @@ const AttendeeManagement = () => {
 
   return (
     <Wrapper>
-     {/* Header Section (Flex Container) */}
-<div className="header-container">
-  <h2 className="heading">Attendee Management</h2>
-  <div className="search-container">
-  <div className="search-box">
-    <FaSearch className="search-icon" />
-    <input
-      type="text"
-      placeholder="Search attendees..."
-      className="search-input"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-  </div>
-  </div>
-</div>
+      {/* Header Section (Flex Container) */}
+      <div className="header-container">
+        <h2 className="heading">Attendee Management</h2>
+        <div className="search-container">
+          <div className="search-box">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search attendees..."
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
 
 
-      
+
 
       {/* Table */}
       <div className="table-container">
@@ -262,7 +262,7 @@ const AttendeeManagement = () => {
                   <td>
                     <Button className="view-profile"
                       onClick={() => navigate(`/profile/${attendee.id}`)}>
-                        View Profile</Button>
+                      View Profile</Button>
                   </td>
                 </tr>
               ))

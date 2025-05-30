@@ -312,7 +312,7 @@ const Wrapper = styled.section`
 .toggle-btn {
   padding: 10px 20px;
   border: none;
-  background-color: #007bff;
+  background-color: rgb(177,179,215);
   color: white;
   border-radius: 8px;
   cursor: pointer;
