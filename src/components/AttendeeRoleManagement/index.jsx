@@ -579,7 +579,7 @@ const AttendeeRoleManagement = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/attendee/roles`);
-                setRoles(response.data.roles || []); 
+                setRoles(response.data.roles || []);
             } catch (error) {
                 console.log(`Error fetching:`, error?.response?.data || error.message);
             }
@@ -601,27 +601,26 @@ const AttendeeRoleManagement = () => {
     return (
         <Wrapper>
             <section className='attendee-role'>
-    <h1>Attendee Roles</h1>
-    <div>
-        <div className="search-container">
-            <input
-                type="text"
-                placeholder="Search attendee role by name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-            />
-            <FaSearch className="search-icon" />
-        </div>
-    </div>
-    <div className='button-class'>
-        {selectedRoles.length > 1 && (
-            <button className='mass-delete' onClick={handleMassDelete}>Delete</button>
-        )}
-        <button className='add-btn' onClick={handleAddNewRole}>Add <MdAddCircle size={26} /></button>
-    </div>
-</section>
-
+                <h1>Attendee Roles</h1>
+                <div>
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="Search attendee role by name..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="search-input"
+                        />
+                        <FaSearch className="search-icon" />
+                    </div>
+                </div>
+                <div className='button-class'>
+                    {selectedRoles.length > 1 && (
+                        <button className='mass-delete' onClick={handleMassDelete}>Delete</button>
+                    )}
+                    <button className='add-btn' onClick={handleAddNewRole}>Add <MdAddCircle size={26} /></button>
+                </div>
+            </section>
             <section className="table-container" ref={tableRef}>
                 <table className="whole-table">
                     <thead className="table-header">

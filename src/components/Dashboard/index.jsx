@@ -88,7 +88,7 @@
 //   // Function to merge data
 //   const mergeData = (users, events, connections) => {
 //     const merged = {};
-    
+
 //     [...users, ...events, ...connections].forEach(item => {
 //       if (!merged[item.month]) {
 //         merged[item.month] = { month: item.month };
