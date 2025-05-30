@@ -391,8 +391,8 @@ const Wrapper = styled.div`
   border-radius: 5px;     /* Smooth rounded corners */
   cursor: pointer;        /* Cursor pointer for interaction */
   gap: 5px;
-  position : fixed;
-  margin-left : 80px;
+  margin-left : 95px;
+  position : sticky;
 }
 
 /* Optional: Add hover effect for better user experience */
@@ -407,7 +407,6 @@ const Wrapper = styled.div`
   gap : 10px;
   width : 190px;
 }
-  
 
 
   /* table layout css */

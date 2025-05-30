@@ -193,7 +193,7 @@
 //       toast.warn("No events selected for deletion!");
 //       return;
 //     }
-  
+
 //     confirmAlert({
 //       title: "Confirm Deletion",
 //       message: `Are you sure you want to delete ${selectedEvents.length} event(s)?`,
@@ -207,7 +207,7 @@
 //                 `/events/deletemass`,
 //                 { ids: selectedEvents }
 //               );
-  
+
 //               const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
 //               setEvents(updatedEvents);
 //               setSelectedEvents([]); // Clear selected
@@ -1267,7 +1267,8 @@ const EventManagement = () => {
               <th className="column checkbox">
                 <input
                   type="checkbox"
-                  checked={selectedEvents.length === events.length}
+                  checked={selectedEvents.length > 0 && selectedEvents.length === events.length}
+                  disabled={selectedEvents.length === 0}
                   onChange={handleSelectAll}
                 />
               </th>

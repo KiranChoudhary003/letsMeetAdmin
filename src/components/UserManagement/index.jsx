@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Pencil, Trash, Eye, EyeOff } from "lucide-react"; // Importing icons
-import Wrapper from "./style";
-import { FaEdit, FaEye } from "react-icons/fa"
-import { MdDelete } from "react-icons/md";
-import { Search } from "lucide-react";
-import axios from '../AxiosInstance';
+import { Eye, EyeOff, Search, Trash } from "lucide-react"; // Importing icons
+import { useEffect, useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
+import axios from '../AxiosInstance';
+import Wrapper from "./style";
 
 const UserManagement = () => {
 
