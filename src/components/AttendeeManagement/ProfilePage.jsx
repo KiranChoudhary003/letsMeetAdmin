@@ -24,11 +24,11 @@ const attendees = [
         users: [
           { id: 101, name: "Alice Johnson", email: "alice@example.com" },
           { id: 102, name: "Bob Brown", email: "bob@example.com" }
-        
-          
+
+
         ]
       },
-      {   
+      {
         name: "Tech Innovations",
         users: [
           { id: 103, name: "Charlie Green", email: "charlie@example.com" }
@@ -42,7 +42,7 @@ const attendees = [
         ]
       }
     ]
-  
+
   },
   {
     id: 2,
@@ -102,13 +102,12 @@ const ProfilePage = () => {
 
   // Find attendee by ID
   const attendee = attendees.find((a) => a.id === parseInt(id));
-  
- 
+
+
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showProfile, setShowProfile] = useState(false);
-  const [showEvents, setShowEvents] = useState(false);
-   
-  
+  const [activeTab, setActiveTab] = useState(null);
+
+
 
   if (!attendee) {
     return (
@@ -120,86 +119,113 @@ const ProfilePage = () => {
 
   return (
     <Wrapper>
-          <div className="toggle-buttons">
-        <button className="toggle-btn" onClick={() => setShowProfile(!showProfile)}>
-          {showProfile ? "Hide Profile Details" : "View Profile Details"}
-        </button>
-        <button className="toggle-btn" onClick={() => setShowEvents(!showEvents)}>
-          {showEvents ? "Hide Event Details" : "View Event Details"}
-        </button>
+      <div> <h2 className="profile-header">Attendee Profile</h2></div>
+      <button className="back-button" onClick={() => navigate(-1)}>←</button>
+      <div className="profile-header-section">
+        <img
+          src={attendee.profileImage || "/default-profile.png"}
+          alt="Attendee"
+          className="profile-image"
+        />
+
+        <a
+          href={attendee.linkedIn || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="linkedin-button-start"
+        >
+          View LinkedIn Profile
+        </a>
       </div>
 
-      {/* Profile Details Section */}
-      {showProfile && (
-      <div className="profile-container">
-        <div className="profile-content">
-          {/* Profile Image */}
-          <div className="profile-image-container">
-            <img
-              src={attendee.profileImage || "/default-profile.png"}
-              alt="Profile"
-              className="profile-image"
-            />
-             <a
-            href={attendee.linkedIn || "https://www.linkedin.com"}
-            target="_blank"
-            rel="noopener noreferrer"y
-            className="linkedin-button"
-          >
-            View LinkedIn Profile
-          </a>
-          </div>
-          <div> <h2 className="profile-header">Attendee Profile</h2></div>
-          {/* Profile Details */}
-          <div className="profile-details">
-         
+      <div className="toggle-buttons">
+        <button
+          className="toggle-btn"
+          onClick={() => setActiveTab(activeTab === 'profile' ? null : 'profile')}
+        >
+          View Profile Details
+        </button>
 
-            <div className="profile-info"><strong>ID:</strong> {attendee.id}</div>
-            <div className="profile-info"><strong>Name:</strong> {attendee.name}</div>
-            <div className="profile-info"><strong>Email:</strong> {attendee.email || "Not provided"}</div>
-            <div className="profile-info"><strong>Role:</strong> {attendee.role || "Attendee"}</div>
-            <div className="profile-info"><strong>Preference:</strong> {attendee.preference || "None"}</div>
-            <div className="profile-info"><strong>Total Events:</strong> {attendee.events}</div>
-            <div className="profile-info"><strong>Total Connections:</strong> {attendee.connections}</div>
-           
-            <button className="back-button" onClick={() => navigate(-1)}>Go Back</button>
-          </div>
-        </div>
+        <button
+          className="toggle-btn"
+          onClick={() => setActiveTab(activeTab === 'event' ? null : 'event')}
+        >
+          View Event Details
+        </button>
+
       </div>
-      )}
-      
-      {/* Event List Section */}
-      {showEvents && (
-      <div className="event-list-container">
-        <h3 className="event-list-title">Events Attended</h3>
-        {attendee.eventList && attendee.eventList.length > 0 ? (
-        <table className="event-table">
-          <thead>
-            <tr>
-              <th>S.N.</th>
-              <th>Event Name</th>
-              <th>Actions</th>
+
+{/* Profile Details Section */}
+{activeTab === 'profile' && (
+  <div className="profile-container">
+    <div className="profile-content">
+      {/* Profile Image */}
+      <div className="profile-image-container">
+        <img
+          src={attendee.profileImage || "/default-profile.png"}
+          alt="Profile"
+          className="profile-image"
+        />
+        <a
+          href={attendee.linkedIn || "https://www.linkedin.com"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="linkedin-button"
+        >
+          View LinkedIn Profile
+        </a>
+      </div>
+
+      {/* Profile Details */}
+      <div className="profile-details">
+        <div className="profile-info"><strong>ID:</strong> {attendee.id}</div>
+        <div className="profile-info"><strong>Name:</strong> {attendee.name}</div>
+        <div className="profile-info"><strong>Email:</strong> {attendee.email || "Not provided"}</div>
+        <div className="profile-info"><strong>Role:</strong> {attendee.role || "Attendee"}</div>
+        <div className="profile-info"><strong>Preference:</strong> {attendee.preference || "None"}</div>
+        <div className="profile-info"><strong>Total Events:</strong> {attendee.events}</div>
+        <div className="profile-info"><strong>Total Connections:</strong> {attendee.connections}</div>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Event List Section */}
+{activeTab === 'event' && (
+  <div className="event-list-container">
+    <h3 className="event-list-title">Events Attended</h3>
+    {attendee.eventList && attendee.eventList.length > 0 ? (
+      <table className="event-table">
+        <thead>
+          <tr>
+            <th>S.N.</th>
+            <th>Event Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {attendee.eventList.map((event, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{event.name}</td>
+              <td>
+                <button
+                  className="view-connection-btn"
+                  onClick={() => setSelectedEvent(event)}
+                >
+                  View Connection
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {attendee.eventList.map((event, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{event.name}</td>
-                <td>
-                  <button className="view-connection-btn" onClick={() => setSelectedEvent(event)}>
-                    View Connection
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-           ) : (
-          <p className="no-events">No events available</p>
-        )}
-      </div>
-      )}
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p className="no-events">No events available</p>
+    )}
+  </div>
+)}
+
 
       {/* Modal for User Connections */}
       {selectedEvent && (
@@ -218,11 +244,11 @@ const ProfilePage = () => {
               <p>No Connections Available</p>
             )}
             <button className="close-modal-btn" onClick={() => setSelectedEvent(null)}>❌</button>
-            
+
           </div>
-          
+
         </div>
-        
+
       )}
     </Wrapper>
   );

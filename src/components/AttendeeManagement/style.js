@@ -166,6 +166,7 @@ const Wrapper = styled.section`
     border-radius: 6px;
     cursor: pointer;
     border: none;
+    font-size:10px;
     transition: all 0.3s ease-in-out;
   }
 

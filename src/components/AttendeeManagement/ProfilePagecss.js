@@ -8,6 +8,7 @@ const Wrapper = styled.section`
     align-items: center;
     justify-content: center;
     padding: 50px;
+    margin-top:-100px;
     background-color: #f4f6f9;
   }
     
@@ -63,7 +64,7 @@ const Wrapper = styled.section`
   text-align: left; /* Aligns text to the left */
   position: absolute;
   top: 100px;
-  left: 230px;
+  left: 750px;
 }
 
   .profile-info {
@@ -82,24 +83,28 @@ const Wrapper = styled.section`
   }
 
   /* Back Button */
-  .back-button {
-    margin-top: 40px;
-    background-color: #ff4d4d;
-    color: white;
-    padding: 10px 26px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    border: none;
-    transition: 0.3s ease;
-    align-self: flex-start;
-    font-weight: bold;
-      margin-top:10px;
-  }
+ .back-button {
+  background-color: rgb(177,179,215); /* Soft indigo */
+  color: black;
+  padding: 10px 26px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-left: 12px;
+  font-size: 20px;
+  font-weight:900;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  align-self: flex-start;
+  font-weight: bold;
+  margin-top: 15px;
 
-  .back-button:hover {
-    background-color: #cc0000;
-  }
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+    background-color: #0056b3;
+}
+
     .event-list-container {
   width: 100%;
   max-width: 800px;
@@ -313,7 +318,9 @@ const Wrapper = styled.section`
   padding: 10px 20px;
   border: none;
   background-color: rgb(177,179,215);
-  color: white;
+  color: black;
+ font-size:20px;
+ font-weight: 550;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s;
@@ -322,7 +329,29 @@ const Wrapper = styled.section`
 .toggle-btn:hover {
   background-color: #0056b3;
 }
-
+.profile-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+ linkedin-button-start
+  {
+ 
+    padding: 20px 200px;
+    font-size: 16px;
+    color: white;
+    background-color: #0077b5;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    width:100%;
+    transition: background 0.3s;
+    margin-top:70px; /* Ensure proper spacing */
+  }
 
 `;
 
