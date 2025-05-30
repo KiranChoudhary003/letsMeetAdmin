@@ -41,7 +41,7 @@ const Wrapper = styled.section`
   display: inline-block;
   width: 46px;
   height: 24px;
-  left:15px;
+  left: 15px;
 }
 
 .switch input {
@@ -53,8 +53,11 @@ const Wrapper = styled.section`
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ff4d4d; /* 🔴 Red when inactive */
   transition: 0.4s;
   border-radius: 34px;
 }
@@ -72,7 +75,7 @@ const Wrapper = styled.section`
 }
 
 input:checked + .slider {
-  background-color: #4caf50; /* Green when active */
+  background-color: #4caf50; /* 🟢 Green when active */
 }
 
 input:checked + .slider:before {
