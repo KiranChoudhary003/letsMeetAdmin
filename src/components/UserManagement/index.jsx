@@ -21,6 +21,160 @@ const UserManagement = () => {
       selected: false,
       showPassword: false
     },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
+    {
+      id: 1,
+      first_name: "Jese",
+      middle_name: "",
+      last_name: "Leos",
+      email: "jese.leos@example.com",
+      role: "Admin",
+      role_id: 3,
+      linkedin_url: "https://linkedin.com/in/jeseleos",
+      password: "admin123",
+      status: "Active",
+      selected: false,
+      showPassword: false
+    },
     // add more users here...
   ]);
   
@@ -43,6 +197,8 @@ const UserManagement = () => {
         role_id: 3,  // Force to 3
       });
     };
+
+    
     
     
   const getNextId = () => users.reduce((maxId, user) => Math.max(maxId, user.id), 0) + 1;
@@ -60,6 +216,11 @@ const UserManagement = () => {
   const handleDelete = (id) => window.confirm("Are you sure you want to delete this user?") && updateUsers(users.filter(user => user.id !== id));
 
   const handleBulkDelete = () => window.confirm("Are you sure you want to delete the selected users?") && updateUsers(users.filter(user => !user.selected));
+   const handleResetButton = () =>{ if (window.confirm("Are you sure you want to Reset Password for the selected users?"))
+    {
+      alert(`Link Send successfully for Selected Users`);}
+    };
+  
 
   const handleToggleStatus = (id) => window.confirm("Are you sure you want to change the status?") && setUsers(users.map(user => user.id === id ? { ...user, status: user.status === "Active" ? "Banned" : "Active" } : user));
   const handleTogglePassword = (id) => {
@@ -98,16 +259,34 @@ const UserManagement = () => {
             className="search-box"
           />
         </div>
+          <div className="header-buttons">
+             
         <button
+          
+          className={`bulk-reset-btn ${users.some(user => user.selected) ? "active" : ""}`}
+          onClick={handleResetButton}
+          disabled={!users.some(user => user.selected)}
+        >
+         Reset Password
+        </button>
+           <div className="header-right"> 
+        <button
+          
           className={`bulk-delete-btn ${users.some(user => user.selected) ? "active" : ""}`}
           onClick={handleBulkDelete}
           disabled={!users.some(user => user.selected)}
         >
           <Trash size={16} /> Delete Selected
         </button>
-
+        </div>
+         <div className="header-left">
         <button className="add-btn" onClick={() => openModal("add")}>+ Add User</button>
+        </div>
+
+       
+        </div>
       </div>
+    
       <div className="table-container">
         <table>
           <thead>
@@ -125,13 +304,23 @@ const UserManagement = () => {
 .map(user => (
               <tr key={user.id}>
                 <td><input type="checkbox" checked={user.selected} onChange={() => handleSelectUser(user.id)} /></td>
+
                 <td>{user.id}</td>
                 <td>{`${user.first_name || ""} ${user.middle_name || ""} ${user.last_name || ""}`.trim()}</td>
                 <td>{user.email}</td>
                 <td>{user.role} </td>
-
-                <td className={`status-text ${user.status.toLowerCase()}`} onClick={() => handleToggleStatus(user.id)} style={{ cursor: "pointer" }}>{user.status}</td>
+<td>
+  <label className="switch">
+    <input
+      type="checkbox"
+      checked={user.status === "Active"}
+      onChange={() => handleToggleStatus(user.id)}
+    />
+    <span className="slider round"></span>
+  </label>
+</td>
                 <td>
+                  
                   {user.showPassword ? user.password : "••••••••"}
                   <button onClick={() => handleTogglePassword(user.id)} className="password">
                     {user.showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -139,10 +328,7 @@ const UserManagement = () => {
                 </td>
                 <td>
                   <div className="button">
-                    <button className="reset-btn" onClick={() => openModal("reset-password", user)}>
-                      Reset Password
-                    </button>
-
+                   
                     <button className="edit-btn" onClick={() => openModal("edit", user)}>
                       <FaEdit size={15} /> {/* Edit Icon */}
                       

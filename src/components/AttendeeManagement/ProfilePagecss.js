@@ -53,9 +53,9 @@ const Wrapper = styled.section`
     text-align: left;
     background: white;
   }
-
+/////*
   .profile-header {
-  font-size: 35px;
+  font-size: 32px;
   font-weight: bold;
   margin-bottom: 10px;
   color:rgba(0, 0, 0, 0.58)
@@ -63,7 +63,7 @@ const Wrapper = styled.section`
   text-align: left; /* Aligns text to the left */
   position: absolute;
   top: 100px;
-  left: 250px;
+  left: 230px;
 }
 
   .profile-info {
@@ -298,6 +298,29 @@ const Wrapper = styled.section`
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.toggle-btn {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle-btn:hover {
+  background-color: #0056b3;
 }
 
 

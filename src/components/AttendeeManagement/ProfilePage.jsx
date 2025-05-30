@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Wrapper from "./ProfilePagecss.js";
 import AttendeeManagement from "./index.jsx"
 
+
+
 // Dummy Attendees Data
 const attendees = [
   {
@@ -103,7 +105,8 @@ const ProfilePage = () => {
   
  
   const [selectedEvent, setSelectedEvent] = useState(null);
-  
+  const [showProfile, setShowProfile] = useState(false);
+  const [showEvents, setShowEvents] = useState(false);
    
   
 
@@ -117,6 +120,17 @@ const ProfilePage = () => {
 
   return (
     <Wrapper>
+          <div className="toggle-buttons">
+        <button className="toggle-btn" onClick={() => setShowProfile(!showProfile)}>
+          {showProfile ? "Hide Profile Details" : "View Profile Details"}
+        </button>
+        <button className="toggle-btn" onClick={() => setShowEvents(!showEvents)}>
+          {showEvents ? "Hide Event Details" : "View Event Details"}
+        </button>
+      </div>
+
+      {/* Profile Details Section */}
+      {showProfile && (
       <div className="profile-container">
         <div className="profile-content">
           {/* Profile Image */}
@@ -152,6 +166,10 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      )}
+      
+      {/* Event List Section */}
+      {showEvents && (
       <div className="event-list-container">
         <h3 className="event-list-title">Events Attended</h3>
         {attendee.eventList && attendee.eventList.length > 0 ? (
@@ -181,6 +199,7 @@ const ProfilePage = () => {
           <p className="no-events">No events available</p>
         )}
       </div>
+      )}
 
       {/* Modal for User Connections */}
       {selectedEvent && (

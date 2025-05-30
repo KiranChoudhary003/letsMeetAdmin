@@ -107,6 +107,106 @@ const attendees = [
     preference: "Networking",
     profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
   },
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Speaker",
+    events: 5,
+    connections: 10,
+    preference: "Tech Talks",
+    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "Attendee",
+    events: 3,
+    connections: 7,
+    preference: "Networking",
+    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
+  },
+  {
+    id: 3,
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Speaker",
+    events: 5,
+    connections: 10,
+    preference: "Tech Talks",
+    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    id: 4,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "Attendee",
+    events: 3,
+    connections: 7,
+    preference: "Networking",
+    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
+  },
+  {
+    id: 5,
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Speaker",
+    events: 5,
+    connections: 10,
+    preference: "Tech Talks",
+    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    id: 6,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "Attendee",
+    events: 3,
+    connections: 7,
+    preference: "Networking",
+    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
+  },
+  {
+    id: 7,
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Speaker",
+    events: 5,
+    connections: 10,
+    preference: "Tech Talks",
+    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    id: 8,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "Attendee",
+    events: 3,
+    connections: 7,
+    preference: "Networking",
+    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
+  },
+  {
+    id: 9,
+    name: "John Doe",
+    email: "john@example.com",
+    role: "Speaker",
+    events: 5,
+    connections: 10,
+    preference: "Tech Talks",
+    profileImage: "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    id: 10,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "Attendee",
+    events: 3,
+    connections: 7,
+    preference: "Networking",
+    profileImage: "https://randomuser.me/api/portraits/women/2.jpg"
+  },
  
 ];
 const AttendeeManagement = () => {
@@ -119,23 +219,23 @@ const AttendeeManagement = () => {
 
   return (
     <Wrapper>
-      {/* Table Heading */}
-      <div className="heading">
-        <h2>Attendee Management</h2>
-      </div>
-      {/* Search Box */}
-      <div className="header-container">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search attendees..."
-            className="search-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+     {/* Header Section (Flex Container) */}
+<div className="header-container">
+  <h2 className="heading">Attendee Management</h2>
+  <div className="search-container">
+  <div className="search-box">
+    <FaSearch className="search-icon" />
+    <input
+      type="text"
+      placeholder="Search attendees..."
+      className="search-input"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
+  </div>
+</div>
+
 
       
 
