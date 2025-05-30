@@ -1,98 +1,103 @@
 import React, { useState, useEffect } from "react";
 import Wrapper from "./style";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import axios from "../AxiosInstance";
 
-const UserEngagement = ({ users, events }) => {
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState("this month");
-  const [selectedEvent, setSelectedEvent] = useState("");
+const UserEngagement = () => {
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState("this_month");
+  const [events, setEvents] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const navigate = useNavigate();
 
-  // Function to filter events based on selected time period
-  const filterByTimePeriod = (event) => {
-    const eventDate = new Date(event.date);
-    const currentDate = new Date();
-
-    switch (selectedTimePeriod) {
-      case "this month":
-        return (
-          eventDate.getFullYear() === currentDate.getFullYear() &&
-          eventDate.getMonth() === currentDate.getMonth()
-        );
-      case "last month":
-        const lastMonth = new Date();
-        lastMonth.setMonth(currentDate.getMonth() - 1);
-        return (
-          eventDate.getFullYear() === lastMonth.getFullYear() &&
-          eventDate.getMonth() === lastMonth.getMonth()
-        );
-      case "last year":
-        return eventDate.getFullYear() === currentDate.getFullYear() - 1;
-      default:
-        return true;
-    }
-  };
-
-  // Filter events based on the selected time period
-  const filteredEvents = events.filter(filterByTimePeriod);
-
-  // Auto-select the first available event whenever the filteredEvents change
   useEffect(() => {
-    if (filteredEvents.length > 0) {
-      setSelectedEvent(filteredEvents[0].eventName);
-    } else {
-      setSelectedEvent(""); // Reset if no events available
-    }
-  }, [filteredEvents]);
+    axios
+      .get(`/events/eventlist/${selectedTimePeriod}`)
+      .then((res) => {
+        console.log("Events response:", res.data);
+        if (res.data && res.data.events) {
+          setEvents(res.data.events);
+          if (res.data.events.length > 0) setSelectedEvent(res.data.events[0].id);
+          else setSelectedEvent(null);
+        } else {
+          setEvents([]);
+          setSelectedEvent(null);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching events:", err);
+        setEvents([]);
+        setSelectedEvent(null);
+      });
+  }, [selectedTimePeriod]);
 
-  // Find selected event data
-  const selectedEventData = filteredEvents.find(e => e.eventName === selectedEvent);
-  const selectedEventID = selectedEventData?.id;
+  useEffect(() => {
+    if (!selectedEvent) return;
 
-  // Filter users who attended events in the selected time period
-  const filteredUsers = selectedEventID
-    ? users.filter(user => user.attendEventIDs.includes(selectedEventID))
-    : [];
+    axios
+      .get(`/events/connections/${selectedEvent}`)
+      .then((res) => {
+        const users = res.data.users || [];
 
-  // Process user engagement data for the graph
-  const data = filteredUsers
-    .map(user => ({
-      name: user.userName,
-      connections: user.connection[selectedEventID] || 0,
-    }))
-    .sort((a, b) => b.connections - a.connections)
-    .slice(0, 5)
+        // Transform and sort data
+        const formatted = users
+          .map(user => ({
+            name: `${user.first_name} ${user.middle_name ? user.middle_name + " " : ""}${user.last_name}`,
+            connections: parseInt(user.total_connections, 10)
+          }))
+          .sort((a, b) => b.connections - a.connections)
+          .slice(0, 5); // Top 5 users
 
-    const navigate = useNavigate()
+        setChartData(formatted);
+      })
+      .catch(err => {
+        console.error("Error fetching connection data:", err);
+        setChartData([]);
+      });
+  }, [selectedEvent]);
 
-    const handleChange = () => {
-      navigate(-1)
-    }
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   return (
     <Wrapper>
-      <IoMdArrowRoundBack className='backArrow' onClick={handleChange}/>
+      <IoMdArrowRoundBack className="backArrow" onClick={handleBack} />
       <h2>User Engagement</h2>
 
       {/* Time Period Filter */}
       <label>Time Period:</label>
-      <select value={selectedTimePeriod} onChange={(e) => setSelectedTimePeriod(e.target.value)}>
-        <option value="this month">This Month</option>
-        <option value="last month">Last Month</option>
-        <option value="last year">Last Year</option>
+      <select
+        value={selectedTimePeriod}
+        onChange={(e) => setSelectedTimePeriod(e.target.value)}
+      >
+        <option value="this_month">This Month</option>
+        <option value="last_month">Last Month</option>
+        <option value="last_year">Last Year</option>
       </select>
 
-      {/* Event Filter (Only events from the selected time period) */}
+      {/* Event Filter */}
       <label>Event:</label>
       <select
-        value={selectedEvent}
-        onChange={(e) => setSelectedEvent(e.target.value)}
-        disabled={filteredEvents.length === 0}
+        value={selectedEvent || ""}
+        onChange={(e) => setSelectedEvent(Number(e.target.value))}
+        disabled={events.length === 0}
       >
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map(event => (
-            <option key={event.id} value={event.eventName}>
-              {event.eventName}
+        {events.length > 0 ? (
+          events.map((event) => (
+            <option key={event.id} value={event.id}>
+              {event.name}
             </option>
           ))
         ) : (
@@ -100,10 +105,10 @@ const UserEngagement = ({ users, events }) => {
         )}
       </select>
 
-      {/* Display Graph or No Data Message */}
-      {data.length > 0 ? (
+      {/* BarChart or No Data */}
+      {chartData.length > 0 ? (
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
+          <BarChart data={chartData}>
             <XAxis dataKey="name" type="category" />
             <YAxis type="number" />
             <Tooltip />

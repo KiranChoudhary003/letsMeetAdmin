@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Wrapper from './style';
-import { ToggleSlider } from 'react-toggle-slider';
-import axios from 'axios';
+import axios from '../AxiosInstance';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Settings = () => {
-  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
 
   const [settings, setSettings] = useState({
     enabled: false,
@@ -15,8 +14,8 @@ const Settings = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const connectionRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/settings/connection-status`);
-        const distanceRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/settings/check-in-distance`);
+        const connectionRes = await axios.get(`/settings/connection-status`);
+        const distanceRes = await axios.get(`/settings/check-in-distance`);
 
         setSettings({
           enabled: Boolean(connectionRes.data.connections_enabled),
@@ -33,23 +32,23 @@ const Settings = () => {
   // Toggle Connection Status
   const handleToggleAction = async () => {
     const newStatus = !settings.enabled;
-  
+
     setSettings((prev) => ({
       ...prev,
       enabled: newStatus
     }));
-  
+
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/settings/connection-status`, {
+      await axios.put(`/settings/connection-status`, {
         enabled: newStatus
       }, {
         headers: { "Content-Type": "application/json" }
       });
-  
-      console.log("Updated connection status:", newStatus);
+
+      toast.success(`Connection status ${newStatus ? "enabled" : "disabled"} successfully.`);
     } catch (error) {
       console.error("Error updating connection status:", error);
-      alert("Failed to update connection status.");
+      toast.error("Failed to update connection status.");
     }
   }
 
@@ -68,33 +67,33 @@ const Settings = () => {
       const connectionStatusData = {
         enabled: Boolean(settings.enabled) // Ensures it's `true` or `false`
       };
-  
+
       const distanceData = {
-        check_in_distance: Number.isNaN(parseInt(settings.check_in_distance, 10)) 
-          ? 0 
+        check_in_distance: Number.isNaN(parseInt(settings.check_in_distance, 10))
+          ? 0
           : parseInt(settings.check_in_distance, 10) // Ensures it's a valid integer
       };
-  
+
       console.log("Sending connection status:", connectionStatusData);
       console.log("Sending check-in distance:", distanceData);
-  
+
       // Send the updated connection status
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/settings/connection-status`, connectionStatusData, {
+      await axios.put(`/settings/connection-status`, connectionStatusData, {
         headers: { "Content-Type": "application/json" }
       });
-  
+
       // Send the updated check-in distance
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/settings/check-in-distance`, distanceData, {
+      await axios.put(`/settings/check-in-distance`, distanceData, {
         headers: { "Content-Type": "application/json" }
       });
-  
-      alert("Successfully Saved!");
+
+      toast.success("Settings saved successfully!");
     } catch (error) {
       console.error("Error saving settings:", error.response?.data || error.message);
-      alert(`Failed to save the setting! ${error.response?.data?.error || ""}`);
+      toast.error(`Failed to save settings! ${error.response?.data?.error || ""}`);
     }
   };
-  
+
 
   return (
     <Wrapper>
@@ -104,7 +103,14 @@ const Settings = () => {
           <div className='connection-request'>
             <h2>Connection Request</h2>
             <div className='toggleSlider'>
-              <ToggleSlider onToggle={handleToggleAction} active={settings.enabled} />
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={settings.enabled}
+                  onChange={handleToggleAction}
+                />
+                <span className="slider round"></span>
+              </label>
             </div>
             <p>{settings.enabled ? "Approved" : "Denied"}</p>
           </div>
@@ -123,6 +129,8 @@ const Settings = () => {
           </div>
         </div>
       </div>
+
+      <ToastContainer position="top-right" autoClose={1500} />
     </Wrapper>
   );
 };

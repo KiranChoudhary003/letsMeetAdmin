@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import Wrapper from './style'
-import axios from 'axios'
+import axios from '../AxiosInstance';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Security = () => {
-
-  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api";
 
   const [isVisible, setIsVisible] = useState(null)
   const [isBlock, setIsBlock] = useState({})
@@ -15,7 +14,7 @@ const Security = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/block-status`);
+        const response = await axios.get(`/users/block-status`);
         if (response.data && response.data.users) {
           const userResponse = response.data.users;
 
@@ -54,7 +53,7 @@ const Security = () => {
 
       try {
         // Send the PUT request with headers ensuring JSON format
-        await axios.put(`${process.env.REACT_APP_BACKEND_URL}/users/block-status`, {
+        await axios.put(`/users/block-status`, {
           id: userId,
           block_status: newStatus
         }, {
@@ -68,30 +67,70 @@ const Security = () => {
         }));
       } catch (error) {
         console.error("Error updating block status:", error.response ? error.response.data : error.message);
-        alert("Failed to update block status!");
+        toast.error("Failed to update block status!");
       }
     }
   }
 
-  const handleChange = (id, newStatus) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.id === id) {
-          if (user.reportStatus === "pending" && newStatus === "In Progress") {
-            return { ...user, reportStatus: "In Progress" }
-          } else if (user.reportStatus.toLowerCase() === "in progress" && newStatus === "Completed") {
-            return { ...user, reportStatus: "Completed" }
-          } else if (user.reportStatus.toLowerCase() === "completed") {
-            alert("Status is already Completed and cannot be changed.")
-            return user
-          }
-        }
-        return user
-      })
-    )
+  const normalizeStatus = (status) => {
+    if (!status) return "";
+    const lower = status.toLowerCase();
+    if (lower === "pending") return "pending";
+    if (lower === "in progress") return "in_progress";  // Replace space with underscore
+    if (lower === "complete" || lower === "completed") return "complete";
+    return lower; // fallback just in case
+  };
 
-    console.log("Updated Users:", users)
-  }
+  useEffect(() => {
+    axios.get(`/security/reports`)
+      .then(res => {
+        const reports = res.data.reports || [];
+        const formatted = reports.map(r => ({
+          id: r.id,
+          issue: r.reason,
+          reportStatus: normalizeStatus(r.status),
+          reportedBy: r.reported_by,
+        }));
+        setUsers(formatted);
+      })
+      .catch(err => {
+        console.error("Error fetching reports:", err);
+      });
+  }, []);
+
+
+  const handleChange = (id, newStatus) => {
+    const currentUser = users.find(u => u.id === id);
+    if (!currentUser) return;
+
+    const current = currentUser.reportStatus;
+
+    if (current === "pending" && newStatus === "in_progress") {
+      updateStatus(id, newStatus);
+    } else if (current === "in_progress" && newStatus === "complete") {
+      updateStatus(id, newStatus);
+    } else if (current === "complete") {
+      toast.error("Status is already Completed and cannot be changed.");
+    } else {
+      toast.error(`Invalid status transition from ${current} to ${newStatus}`);
+    }
+  };
+
+  const updateStatus = (id, status) => {
+    console.log("Updating report id:", id, "to status:", status);
+    axios.put(`/security/reports/update-status/${id}`, { status })
+      .then(() => {
+        setUsers(prevUsers =>
+          prevUsers.map(user =>
+            user.id === id ? { ...user, reportStatus: status } : user
+          )
+        );
+      })
+      .catch(err => {
+        console.error("Error updating status:", err);
+        toast.error("Failed to update status. Please try again.");
+      });
+  };
 
 
   return (
@@ -180,7 +219,7 @@ const Security = () => {
                   <table>
                     <thead>
                       <tr>
-                        <th>S.No</th>
+                        <th>User Id</th>
                         <th>Complain</th>
                         <th>Status</th>
                         <th>Task</th>
@@ -189,18 +228,23 @@ const Security = () => {
                     <tbody>
                       {users.map((user, index) => (
                         <tr key={user.id}>
-                          <td>{index + 1}</td>
+                          <td>{user.reportedBy}</td>
                           <td>{user.issue}</td>
                           <td>{user.reportStatus}</td>
                           <td>
-                            <button className="report-btn in-progress" onClick={() => handleChange(user.id, "In Progress")}>
+                            <button className="report-btn in-progress"
+                              onClick={() => handleChange(user.id, "in_progress")}
+                              disabled={user.reportStatus !== "pending"}
+                            >
                               In Progress
                             </button>
-                            <button className="report-btn completed" onClick={() => handleChange(user.id, "Completed")}>
+                            <button className="report-btn completed"
+                              onClick={() => handleChange(user.id, "complete")}
+                              disabled={user.reportStatus !== "in_progress"}
+                            >
                               Completed
                             </button>
                           </td>
-
                         </tr>
                       ))}
                     </tbody>
@@ -211,6 +255,8 @@ const Security = () => {
           </div>
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={1500} />
     </Wrapper>
   )
 }

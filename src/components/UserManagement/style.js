@@ -12,79 +12,171 @@ const Wrapper = styled.section`
     margin: 20px;
   }
 
+   ////*
   .header {
-    display: flex;
-    width : 100%;
-    box-sizing : border-box;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 15px;
-  }
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: -65px;
+  
+  
+}
+     .table-container {
+  max-height: 500px;  /* or any height you want */
+  overflow-y: auto;
+  padding: 0px;       /* scrollable padding */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  margin-top: 20px;
+}
+  .switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  left:15px;
+}
 
-  /* 🔎 Search Bar with Icon */
-  .search-container {
-    position: relative;
-    width: 300px;
-  }
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-  .search-box {
-    width: 100%;
-    padding: 10px 35px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
 
-  .search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: gray;
-  }
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
 
-  /* ✅ Add User Button */
-  .add-btn {
-    background: green;
-    color: white;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-  }
+input:checked + .slider {
+  background-color: #4caf50; /* Green when active */
+}
 
-  /* ❌ Bulk Delete Button (Disabled by Default) */
-  .bulk-delete-btn {
-    background: #ccc;
-    color: white;
-    padding: 10px;
-    border: none;
-    cursor: not-allowed;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    position : absolute;
-    right : 120px;
-  }
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
 
-  /* 🔴 Active Bulk Delete Button */
-  .bulk-delete-btn.active {
-    background: #dc3545;
-    cursor: pointer;
-  }     
 
-  .table-container{
-    max-height : 450px;
-    overflow-y : auto;
-  }
+.search-container {
+  position: absolute;
+  top: -100%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
 
-  .bulk-delete-btn.active:hover {
-    background: #c82333;
-    cursor: pointer;
-  }    
+.search-box {
+  width: 70%;
+  padding: 10px 35px 10px 40px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.search-icon {
+  position: absolute;
+  left: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: gray;
+  font-size: 18px;
+  pointer-events: none;
+}
+.bulk-reset-btn {
+  background: #ccc;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: not-allowed;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bulk-reset-btn.active {
+  background: #28a745; /* Green */
+  cursor: pointer;
+}
+
+.bulk-reset-btn.active:hover {
+  background: #218838; /* Darker green on hover */
+}
+
+
+  /* Button container on top-right */
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  right: 20px;
+  top: -100%;
+  transform: translateY(-50%);
+}
+
+/* ✅ Add User Button */
+.add-btn {
+  background: rgb(177, 179, 215);
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+
+  border-radius: 5px;
+}
+
+/* ❌ Bulk Delete Button (Disabled by Default) */
+.bulk-delete-btn {
+  background: #ccc;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: not-allowed;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* 🔴 Active Bulk Delete Button */
+.bulk-delete-btn.active {
+  background: #dc3545;
+  cursor: pointer;
+}
+
+.bulk-delete-btn.active:hover {
+  background: #c82333;
+}
+
+
 
   table {
     width: 100%;
@@ -92,21 +184,30 @@ const Wrapper = styled.section`
     background: #fff;
   }
 
-  thead{
-    position : sticky;
-    top : 0;
-  }
+  thead {
+  position: sticky;
+  top: 0;
+  background: rgb(177,179,215); /* 🔵 Dark Blue Background */
+  color: white;         /* 🟨 White Text */
+  z-index: 1;
+}
 
-  th, td {
-    border: 1px solid #ddd;
+th {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  color: black;         /* 🟨 Ensures header text is white */
+  background:rgb(177,179,215);  /* 🔵 Matching background */
+}
+   td {
+  border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
   }
+  
 
-  th {
-    background: #333;
-    color: white;
-  }
+
+ /////*
 
   .actions {
     display: flex;
@@ -123,6 +224,7 @@ const Wrapper = styled.section`
     align-items: center;
     gap: 5px;
   }
+   
 
 
  .edit-btn {
@@ -146,23 +248,19 @@ const Wrapper = styled.section`
   margin-right: 5px;
 }
 
-// .delete-btn:hover {
-//   background: white;
-//   color: rgb(244, 67, 54);
-// }
-
 .reset-btn {
-  font-size : 20px;
-  background : white;
-  color: darkblue;
+  background: #28a745;
+  color: white;
   border: none;
-  padding: 8px 5px 0;
+  border-radius: 5px;
+  padding: 8px 12px;
+  transition: background 0.3s ease-in-out;
   margin-right: 5px;
 }
 
-// .reset-btn:hover {
-//   background: #1e7e34;
-// }
+.reset-btn:hover {
+  background: #1e7e34;
+}
 
 /* Add spacing between buttons inside the actions column */
 .actions {
@@ -188,28 +286,6 @@ const Wrapper = styled.section`
   color: red;
   font-weight: bold;
 }
-
-/* 🏷️ Toggle Button Styling */
-.toggle-btn {
-  cursor: pointer;
-  background: #f8f9fa; /* Light gray background */
-  border: 1px solid #bbb; /* Softer border */
-  padding: 6px 10px; /* Better spacing */
-  border-radius: 6px; /* Smoother curves */
-  transition: background 0.3s, border 0.3s; /* Smooth hover effect */
-}
-
-/* 🏷️ Hover & Focus Effects */
-.toggle-btn:hover {
-  background: #e0e0e0; /* Darker gray on hover */
-  border-color: #888;
-}
-
-.toggle-btn:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
 
  /* 🔲 Modal Overlay */
 .modal {
@@ -296,10 +372,54 @@ input {
 }
 
 .modal-content.reset-password {
-  width: 300px;
-  height: 150px;
+  width: 380px;
+  min-height: 220px;
 }
-  
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+  left: 15px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ff4d4d; /* 🔴 Red when inactive */
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4caf50; /* 🟢 Green when active */
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
 `;
 
-export default Wrapper;
+export default Wrapper

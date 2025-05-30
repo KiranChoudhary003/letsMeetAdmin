@@ -15,24 +15,24 @@ const Layout = () => {
             <div className="home">
                 <div className="heading">
                     {/* {!hiddenRoutes.includes(location.pathname) && ( */}
-                        <div className="menu">
-                            <Menu />
-                        </div>
+                    <div className="menu">
+                        <Menu />
+                    </div>
                     {/* )} */}
                     <div className="main-content">
                         {/* {!hiddenRoutes.includes(location.pathname) && */}
-                            <div className="header">
-                                <Header />
-                            </div>
+                        <div className="header">
+                            <Header />
+                        </div>
                         {/* } */}
                         <div className="outlet">
                             <Outlet />
                         </div>
                     </div>
                 </div>
-                {/* {!hiddenRoutes.includes(location.pathname) && */}
+                <div className="footer">
                     <Footer />
-                {/* } */}
+                </div>
             </div>
         </Wrapper>
     )

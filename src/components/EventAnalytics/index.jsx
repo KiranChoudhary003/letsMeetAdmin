@@ -1,58 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip,
+  PieChart, Pie, Cell, Legend, ResponsiveContainer
+} from "recharts";
 import Wrapper from "./style";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import axios from '../AxiosInstance';
 
-const EventAnalytics = ({ events, users }) => {
-  const [eventConnection, setEventConnection] = useState({});
+const EventAnalytics = () => {
+  const [eventData, setEventData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!Array.isArray(users) || users.length === 0) return;
+    const fetchEventConnections = async () => {
+      try {
+        const response = await axios.get(`/events/total/connections`);
+        const data = response.data
 
-    const eventMap = {};
+        if (data.events) {
+          const sortedTop3 = data.events
+            .map(event => ({
+              ...event,
+              connectionCount: parseInt(event.total_connections, 10)
+            }))
+            .sort((a, b) => b.connectionCount - a.connectionCount)
+            .slice(0, 3);
 
-    users.forEach((user) => {
-      if (user.attendEventIDs && Array.isArray(user.attendEventIDs)) {
-        user.attendEventIDs.forEach((eventID) => {
-          if (!eventMap[eventID]) {
-            eventMap[eventID] = 0;
-          }
-          if (user.connection && user.connection[eventID]) {
-            eventMap[eventID] += user.connection[eventID];
-          }
-        });
+          setEventData(sortedTop3);
+        }
+      } catch (error) {
+        console.error("Error fetching event analytics:", error);
       }
-    });
+    };
 
-    setEventConnection(eventMap);
-  }, [users]);
+    fetchEventConnections();
+  }, []);
 
-  const eventData = events
-    .map(event => ({
-      ...event,
-      connectionCount: eventConnection[event.id] || 0
-    }))
-    .sort((a, b) => b.connectionCount - a.connectionCount)
-    .slice(0, 3);
-
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658"]
-  
-  const navigate = useNavigate()
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
   const handleChange = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
   return (
     <Wrapper>
       <IoMdArrowRoundBack className="backArrow" onClick={handleChange} />
       <h2>Event Analytics</h2>
+
       <div className="chart-container">
         {/* Bar Chart */}
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={eventData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <XAxis dataKey="eventName" />
+          <BarChart
+            data={eventData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <XAxis dataKey="event_name" />
             <YAxis />
             <Tooltip />
             <Bar dataKey="connectionCount" barSize={50}>
@@ -69,7 +72,7 @@ const EventAnalytics = ({ events, users }) => {
             <Pie
               data={eventData}
               dataKey="connectionCount"
-              nameKey="eventName"
+              nameKey="event_name"
               cx="50%"
               cy="50%"
               outerRadius={100}
@@ -87,4 +90,4 @@ const EventAnalytics = ({ events, users }) => {
   );
 };
 
-export default EventAnalytics;
+export default EventAnalytics

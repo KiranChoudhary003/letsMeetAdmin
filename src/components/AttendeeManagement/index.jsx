@@ -3,19 +3,16 @@ import { FaSearch } from "react-icons/fa";
 import { Button } from "@mui/material";
 import Wrapper from "./style";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
+import axios from '../AxiosInstance';
 
 const AttendeeManagement = () => {
-
-  // const REACT_APP_BACKEND_URL = "http://192.168.0.87:5000/api"
 
   const [attendees, setAttendees] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/stats`)
+        const response = await axios.get(`/users/stats`)
 
         const formattedAttendees = response.data.data.map(user => ({
           id: user.user_id,
@@ -42,21 +39,19 @@ const AttendeeManagement = () => {
 
   return (
     <Wrapper>
-      {/* Table Heading */}
-      <div className="heading">
-        <h2>Attendee Management</h2>
-      </div>
-      {/* Search Box */}
       <div className="header-container">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search attendees..."
-            className="search-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <h2 className="heading">Attendee Management</h2>
+        <div className="search-container">
+          <div className="search-box">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search attendees..."
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -84,7 +79,7 @@ const AttendeeManagement = () => {
                   <td>{attendee.connections}</td>
                   <td>
                     <Button className="view-profile"
-                      onClick={() => navigate(`/attendeeManagement/profile/${attendee.id}`, {state : {attendee}})}>
+                      onClick={() => navigate(`/attendeeManagement/profile/${attendee.id}`, { state: { attendee } })}>
                       View Profile</Button>
                   </td>
                 </tr>

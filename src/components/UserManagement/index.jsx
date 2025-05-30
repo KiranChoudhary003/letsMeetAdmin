@@ -4,9 +4,9 @@ import Wrapper from "./style";
 import { FaEdit, FaEye } from "react-icons/fa"
 import { MdDelete } from "react-icons/md";
 import { Search } from "lucide-react";
-import axios from "axios";
+import axios from '../AxiosInstance';
 import { confirmAlert } from "react-confirm-alert";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const UserManagement = () => {
 
@@ -15,7 +15,7 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`);
+        const response = await axios.get(`/users`);
         const formattedUsers = response.data.map(user => ({
           id: user.id,
           first_name: user.first_name?.trim() || "",
@@ -25,7 +25,7 @@ const UserManagement = () => {
           role: user.attendees_role || "N/A",
           status: user.status
             ? user.status.charAt(0).toUpperCase() + user.status.slice(1)
-            : "Inactive",
+            : "inactive",
           password_hash: user.password_hash || "••••••••",
           selected: false,
           showPassword: false,
@@ -49,13 +49,41 @@ const UserManagement = () => {
   };
 
   const handleToggleStatus = (id) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === id
-          ? { ...user, status: user.status === "Active" ? "Inactive" : "Active" }
-          : user
-      )
-    );
+    const userToUpdate = users.find(user => user.id === id);
+    if (!userToUpdate) return;
+
+    const newStatus = userToUpdate.status.toLowerCase() === "active" ? "inactive" : "active";
+
+    confirmAlert({
+      title: "Confirm Status Change",
+      message: `Are you sure you want to change the status to ${newStatus}?`,
+      buttons: [
+        {
+          label: "Yes",
+          onClick: async () => {
+            try {
+              const response = await axios.put(`/users/status/${id}`, { status: newStatus });
+
+              const updatedStatus = response.data.status;
+
+              setUsers(prevUsers =>
+                prevUsers.map(user =>
+                  user.id === id ? { ...user, status: updatedStatus } : user
+                )
+              );
+              toast.success("Status successfully update!")
+            } catch (error) {
+              console.error("Failed to toggle status:", error);
+              toast.error("Could not update user status.");
+            }
+          }
+        },
+        {
+          label: "No",
+          onClick: () => { }
+        }
+      ]
+    });
   };
 
   const handleTogglePassword = (id) => {
@@ -71,16 +99,61 @@ const UserManagement = () => {
     [currentUser, setCurrentUser] = useState({}),
     [newPassword, setNewPassword] = useState("");
 
-  const getNextId = () => users.reduce((maxId, user) => Math.max(maxId, user.id), 0) + 1;
+  // const handleSaveUser = async () => {
+  //   const isEdit = modalType === "edit";
+  //   const url = isEdit ? `/users/${currentUser.id}` : "/users";
+  //   const method = isEdit ? "PUT" : "POST";
 
-  const updateUsers = (updatedUsers) => setUsers(updatedUsers.map((user, index) => ({ ...user, id: index + 1 })));
+  //   // if (!window.confirm(`Are you sure you want to ${isEdit ? "update" : "add"} this user?`)) return;
+
+  //   const userData = {
+  //     first_name: currentUser.first_name || "",
+  //     middle_name: currentUser.middle_name || "",
+  //     last_name: currentUser.last_name || "",
+  //     username: currentUser.username || "",
+  //     email: currentUser.email || "",
+  //     password: currentUser.password || "",
+  //     role_id: Number(currentUser.role_id) || 3,
+  //     attendees_role: currentUser.role || "",
+  //     photo: currentUser.photo || "",
+  //     linkedin_url: currentUser.linkedin_url || "",
+  //   };
+
+
+  //   console.log("Sending Data:", userData);
+
+  //   try {
+  //     let response;
+
+  //     if (isEdit) {
+  //       response = await axios.put(url, userData);
+  //     } else {
+  //       response = await axios.post(url, userData);
+  //     }
+
+  //     const data = response.data
+  //     console.log("Server Response:", data); // ✅ Check response from backend
+
+  //     if (!response.ok) {
+  //       throw new Error(data.error || `Failed to ${isEdit ? "update" : "add"} user.`);
+  //     }
+
+  //     if (isEdit) {
+  //       setUsers(users.map(user => (user.id === currentUser.id ? data : user)));
+  //     } else {
+  //       setUsers([...users, { ...data, selected: false, status: "active" }]);
+  //     }
+
+  //     closeModal();
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     toast.error(`Error: ${error.message}`);
+  //   }
+  // }
 
   const handleSaveUser = async () => {
     const isEdit = modalType === "edit";
     const url = isEdit ? `/users/${currentUser.id}` : "/users";
-    const method = isEdit ? "PUT" : "POST";
-
-    if (!window.confirm(`Are you sure you want to ${isEdit ? "update" : "add"} this user?`)) return;
 
     const userData = {
       first_name: currentUser.first_name || "",
@@ -91,41 +164,31 @@ const UserManagement = () => {
       password: currentUser.password || "",
       role_id: Number(currentUser.role_id) || 3,
       attendees_role: currentUser.role || "",
-      photo: currentUser.photo || "", // if available, else leave as ""
+      photo: currentUser.photo || "",
       linkedin_url: currentUser.linkedin_url || "",
     };
 
-
-    console.log("Sending Data:", userData); // ✅ Check this in browser console
-
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${url}`, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      const response = isEdit
+        ? await axios.put(url, userData)
+        : await axios.post(url, userData);
 
-      const data = await response.json();
-      console.log("Server Response:", data); // ✅ Check response from backend
-
-      if (!response.ok) {
-        throw new Error(data.error || `Failed to ${isEdit ? "update" : "add"} user.`);
-      }
+      const data = response.data;
 
       if (isEdit) {
         setUsers(users.map(user => (user.id === currentUser.id ? data : user)));
+        toast.success("User updated successfully!");
       } else {
-        setUsers([...users, { ...data, selected: false, status: "Active" }]);
+        setUsers([...users, { ...data, selected: false, status: "active" }]);
+        toast.success("User added successfully!");
       }
 
-      closeModal();
+      closeModal(); // ✅ Close the modal after success
     } catch (error) {
       console.error("Error:", error);
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error: ${error.response?.data?.error || error.message}`);
     }
-  }
+  };
 
   const handleDelete = (id) => {
     confirmAlert({
@@ -136,7 +199,7 @@ const UserManagement = () => {
           label: "Yes",
           onClick: async () => {
             try {
-              const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/users/${id}`)
+              const response = await axios.delete(`/users/${id}`)
 
               if (response.data && response.data.message) {
                 toast.success(response.data.message);
@@ -158,7 +221,6 @@ const UserManagement = () => {
     })
   }
 
-  // const handleBulkDelete = (ids) => window.confirm("Are you sure you want to delete the selected users?") && updateUsers(users.filter(user => !user.selected));
   const handleBulkDelete = () => {
     const selectedIds = users.filter(user => user.selected).map(user => user.id);
 
@@ -173,7 +235,7 @@ const UserManagement = () => {
           onClick: async () => {
             try {
               const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/users/deletemass`,
+                `/users/deletemass`,
                 { ids: selectedIds } // Adjust to match your backend format
               );
 
@@ -194,57 +256,14 @@ const UserManagement = () => {
     });
   };
 
-  const handleResetPassword = async () => {
-    if (!newPassword || newPassword.trim().length < 6) {
-      alert("Password must be at least 6 characters.");
-      return;
-    }
-
-    if (!window.confirm("Are you sure you want to reset the password?")) return;
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${currentUser.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ password: newPassword }) // ✅ Only send password
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to reset password.");
-      }
-
-      alert("Password has been reset successfully.");
-      setNewPassword(""); // clear the input
-      closeModal();       // close modal
-    } catch (error) {
-      console.error("Reset Password Error:", error);
-      alert(`Error: ${error.message}`);
-    }
-  };
-
-
   const openModal = (type, user = {}) => (setModalType(type), setCurrentUser(user));
 
   const closeModal = () => (setModalType(""), setCurrentUser({}), setNewPassword(""));
 
-
-  const handleEdit = (user) => {
-    setCurrentUser({
-      name: user.name || "",
-      email: user.email || "",
-      password: user.password || "",
-      status: user.status || "Active",
-      role_id: 3,  // Force to 3
-    });
-  };
-
-  const handleSubmit = async () => {
-    const userToSave = { ...currentUser, role_id: 3 };
-    // your fetch/axios POST or PUT call here
+  const handleResetButton = () => {
+    if (window.confirm("Are you sure you want to Reset Password for the selected users?")) {
+      alert(`Link Send successfully for Selected Users`);
+    }
   };
 
   return (
@@ -254,7 +273,6 @@ const UserManagement = () => {
       </div>
 
       <div className="header">
-
         <div className="search-container">
           <Search size={18} className="search-icon" />
           <input
@@ -265,16 +283,30 @@ const UserManagement = () => {
             className="search-box"
           />
         </div>
-        <button
-          className={`bulk-delete-btn ${users.some(user => user.selected) ? "active" : ""}`}
-          onClick={handleBulkDelete}
-          disabled={!users.some(user => user.selected)}
-        >
-          <Trash size={16} /> Delete Selected
-        </button>
+        <div className="header-buttons">
+          <button
 
-        <button className="add-btn" onClick={() => openModal("add")}>+ Add User</button>
+            className={`bulk-reset-btn ${users.some(user => user.selected) ? "active" : ""}`}
+            onClick={handleResetButton}
+            disabled={!users.some(user => user.selected)}
+          >
+            Reset Password
+          </button>
+          <div className="header-right">
+            <button
+              className={`bulk-delete-btn ${users.some(user => user.selected) ? "active" : ""}`}
+              onClick={handleBulkDelete}
+              disabled={!users.some(user => user.selected)}
+            >
+              <Trash size={16} /> Delete Selected
+            </button>
+          </div>
+          <div className="header-left">
+            <button className="add-btn" onClick={() => openModal("add")}>+ Add User</button>
+          </div>
+        </div>
       </div>
+
       <div className="table-container">
         <table>
           <thead>
@@ -304,12 +336,15 @@ const UserManagement = () => {
                   </td>
                   <td>{user.email}</td>
                   <td>{user.role}</td>
-                  <td
-                    className={`status-text ${user.status.toLowerCase()}`}
-                    onClick={() => handleToggleStatus(user.id)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {user.status}
+                  <td>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        checked={user.status?.toLowerCase() === "active"}
+                        onChange={() => handleToggleStatus(user.id)}
+                      />
+                      <span className="slider round"></span>
+                    </label>
                   </td>
                   <td>
                     {user.showPassword ? user.password_hash : "••••••••"}
@@ -322,9 +357,9 @@ const UserManagement = () => {
                   </td>
                   <td>
                     <div className="button">
-                      <button className="reset-btn" onClick={() => openModal("reset-password", user)}>
+                      {/* <button className="reset-btn" onClick={() => openModal("reset-password", user)}>
                         <FaEye />
-                      </button>
+                      </button> */}
 
                       <button className="edit-btn" onClick={() => openModal("edit", user)}>
                         <FaEdit size={15} />
@@ -377,7 +412,7 @@ const UserManagement = () => {
               <input type="text" placeholder="Middle Name" value={currentUser.middle_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, middle_name: e.target.value })} />
               <input type="text" placeholder="Last Name" value={currentUser.last_name || ""} onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })} />
               <input type="email" placeholder="Email" value={currentUser.email || ""} onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })} />
-              <input type="password" placeholder="Password" value={currentUser.password || ""} onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })} required />
+              <input type="password" placeholder="Password" value={currentUser.password || ""} onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })} />
               <input type="text" placeholder="Role" value={currentUser.role || ""} onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })} />
               <input type="text" placeholder="LinkedIn URL" value={currentUser.linkedin || ""} onChange={(e) => setCurrentUser({ ...currentUser, linkedin: e.target.value })} />
               <button onClick={handleSaveUser} className="submit-btn">Save</button>
@@ -397,6 +432,8 @@ const UserManagement = () => {
           </div>
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={1500} />
     </Wrapper >
   );
 };

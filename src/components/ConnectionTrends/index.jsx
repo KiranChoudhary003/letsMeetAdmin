@@ -1,43 +1,39 @@
-import React, { useEffect, useState } from 'react'
-import { IoMdArrowRoundBack } from "react-icons/io"
-import Wrapper from './style'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { IoMdArrowRoundBack } from "react-icons/io";
+import Wrapper from './style';
+import { useNavigate } from 'react-router-dom';
+import axios from '../AxiosInstance';
 
-const ConnectionTrends = ({ users, events }) => {
-  const [eventConnection, setEventConnection] = useState({})
+const ConnectionTrends = () => {
+  const [eventData, setEventData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!Array.isArray(users) || users.length === 0) return
+    const fetchEventConnections = async () => {
+      try {
+        const response = await axios.get(`/events/total/connections`);
+        const data = response.data;
 
-    const eventMap = {}
-
-    users.forEach((user) => {
-      if (user.attendEventIDs && Array.isArray(user.attendEventIDs)) {
-        user.attendEventIDs.forEach((eventID) => {
-          if (!eventMap[eventID]) {
-            eventMap[eventID] = 0
-          }
-          if (user.connection && user.connection[eventID]) {
-            eventMap[eventID] += user.connection[eventID]
-          }
-        })
+        if (data.events) {
+          setEventData(data.events);
+        }
+      } catch (error) {
+        console.error("Error fetching event connections:", error);
       }
-    })
+    };
 
-    setEventConnection(eventMap)
-  }, [users])
+    fetchEventConnections();
+  }, []);
 
-  const navigate = useNavigate()
-
-  const handleChange = () => {
-    navigate(-1)
-  }
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   return (
     <Wrapper>
       <div className='modal-content'>
         <div className='header'>
-          <IoMdArrowRoundBack className="backArrow" onClick={handleChange} />
+          <IoMdArrowRoundBack className="backArrow" onClick={handleBack} />
           <h2>Connection Trends</h2>
         </div>
         <div className='scroll-container'>
@@ -50,11 +46,11 @@ const ConnectionTrends = ({ users, events }) => {
               </tr>
             </thead>
             <tbody>
-              {events.map((event, index) => (
-                <tr key={event.id}>
+              {eventData.map((event, index) => (
+                <tr key={event.event_id}>
                   <td>{index + 1}</td>
-                  <td>{event.eventName}</td>
-                  <td>{eventConnection[event.id] || 0}</td>
+                  <td>{event.event_name}</td>
+                  <td>{event.total_connections}</td>
                 </tr>
               ))}
             </tbody>
@@ -62,7 +58,7 @@ const ConnectionTrends = ({ users, events }) => {
         </div>
       </div>
     </Wrapper>
-  )
-}
+  );
+};
 
-export default ConnectionTrends
+export default ConnectionTrends;

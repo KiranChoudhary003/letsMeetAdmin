@@ -16,34 +16,36 @@ import EventAnalytics from "./components/EventAnalytics"
 import ConnectionTrends from "./components/ConnectionTrends"
 import Profile from "./components/Profile"
 import ProfilePage from "./components/AttendeeManagement/ProfilePage"
+import Login from "./components/Login"
+import PrivateRoute from "./components/PrivateRoutes"
 
 const App = () => {
 
   const eventData = [
     {
-      id : 1,
-      eventName : "React",
-      date : "2025-03-08"
+      id: 1,
+      eventName: "React",
+      date: "2025-03-08"
     },
     {
-      id : 2,
-      eventName : "DevOps",
-      date : "2025-03-08"
+      id: 2,
+      eventName: "DevOps",
+      date: "2025-03-08"
     },
     {
       id: 3,
-      eventName : "SalesForce",
-      date : "2025-01-28"
+      eventName: "SalesForce",
+      date: "2025-01-28"
     },
     {
-      id : 4,
-      eventName : "Cloud",
-      date : "2024-10-20"
+      id: 4,
+      eventName: "Cloud",
+      date: "2024-10-20"
     },
     {
-      id : 5,
-      eventName : "Hackathon",
-      date : "2024-11-25"
+      id: 5,
+      eventName: "Hackathon",
+      date: "2024-11-25"
     }
   ]
 
@@ -163,22 +165,29 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="profile" element={<Profile />}/>
-          <Route path="userManagement" element={<UserManagement />} />
-          <Route path="eventManagement" element={<EventManagement />} />
-          <Route path="attendeeManagement" element={<AttendeeManagement />} />
-          <Route path="attendeeManagement/profile/:id" element={<ProfilePage />} />
-          <Route path="attendeeRole" element={<AttendeeRoleManagement />} />
-          <Route path="settings" element={<Settings users={users} setUsers={setUsers} />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="reports/user-engagement" element={<UserEngagement users={users} events={events}/>}/>
-          <Route path="reports/event-analytics" element={<EventAnalytics events={events} users={users}/>}/>
-          <Route path="reports/connection-trends" element={<ConnectionTrends users={users} events={events}/>}/>
-          <Route path="security" element={<Security />} />
-          <Route path="qrCode" element={<QRCode />} />
-          <Route path="aiRecommendation" element={<AIRecommendation />} />
+        <Route path="/" element={<Login />} />
+
+        {/* Protected Routes wrapped in Layout */}
+        <Route element={
+          <PrivateRoute>
+            <Layout />
+          </PrivateRoute>
+        }>
+          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          <Route path="/userManagement" element={<UserManagement />} />
+          <Route path="/eventManagement" element={<EventManagement />} />
+          <Route path="/attendeeManagement" element={<AttendeeManagement />} />
+          <Route path="/attendeeManagement/profile/:id" element={<ProfilePage />} />
+          <Route path="/attendeeRole" element={<AttendeeRoleManagement />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/reports/user-engagement" element={<UserEngagement users={users} events={events} />} />
+          <Route path="/reports/event-analytics" element={<EventAnalytics />} />
+          <Route path="/reports/connection-trends" element={<ConnectionTrends />} />
+          <Route path="/security" element={<Security />} />
+          <Route path="/qrCode" element={<QRCode />} />
+          <Route path="/aiRecommendation" element={<AIRecommendation />} />
         </Route>
       </Routes>
     </BrowserRouter>
