@@ -7,14 +7,18 @@ import Wrapper from "./style";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from '../AxiosInstance';
+import LoadingScreen from "../loading";  // <-- Import LoadingScreen
 
 const EventAnalytics = () => {
   const [eventData, setEventData] = useState([]);
+  const [loading, setLoading] = useState(true);  // <-- Loading state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventConnections = async () => {
       try {
+        setLoading(true);  // start loading
+
         const response = await axios.get(`/events/total/connections`);
         const data = response.data
 
@@ -31,11 +35,15 @@ const EventAnalytics = () => {
         }
       } catch (error) {
         console.error("Error fetching event analytics:", error);
+      } finally {
+        setLoading(false);  // end loading
       }
     };
 
     fetchEventConnections();
   }, []);
+
+  if (loading) return <LoadingScreen />;  // show loading while fetching
 
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
@@ -90,4 +98,4 @@ const EventAnalytics = () => {
   );
 };
 
-export default EventAnalytics
+export default EventAnalytics;

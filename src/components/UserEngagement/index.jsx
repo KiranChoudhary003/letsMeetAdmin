@@ -12,24 +12,30 @@ import {
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from "../AxiosInstance";
+import LoadingScreen from "../loading"; // ✅ Import LoadingScreen
 
 const UserEngagement = () => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState("this_month");
   const [events, setEvents] = useState([]);
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ Loading state
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true); // ✅ Start loading when fetching events
     axios
       .get(`/events/eventlist/${selectedTimePeriod}`)
       .then((res) => {
         console.log("Events response:", res.data);
         if (res.data && res.data.events) {
           setEvents(res.data.events);
-          if (res.data.events.length > 0) setSelectedEvent(res.data.events[0].id);
-          else setSelectedEvent(null);
+          if (res.data.events.length > 0) {
+            setSelectedEvent(res.data.events[0].id);
+          } else {
+            setSelectedEvent(null);
+          }
         } else {
           setEvents([]);
           setSelectedEvent(null);
@@ -39,18 +45,24 @@ const UserEngagement = () => {
         console.error("Error fetching events:", err);
         setEvents([]);
         setSelectedEvent(null);
+      })
+      .finally(() => {
+        setLoading(false); // ✅ Done loading events
       });
   }, [selectedTimePeriod]);
 
   useEffect(() => {
-    if (!selectedEvent) return;
+    if (!selectedEvent) {
+      setChartData([]);
+      return;
+    }
 
+    setLoading(true); // ✅ Start loading when fetching user connections
     axios
       .get(`/events/connections/${selectedEvent}`)
       .then((res) => {
         const users = res.data.users || [];
 
-        // Transform and sort data
         const formatted = users
           .map(user => ({
             name: `${user.first_name} ${user.middle_name ? user.middle_name + " " : ""}${user.last_name}`,
@@ -64,12 +76,19 @@ const UserEngagement = () => {
       .catch(err => {
         console.error("Error fetching connection data:", err);
         setChartData([]);
+      })
+      .finally(() => {
+        setLoading(false); // ✅ Done loading user data
       });
   }, [selectedEvent]);
 
   const handleBack = () => {
     navigate(-1);
   };
+
+  if (loading) {
+    return <LoadingScreen />; // ✅ Show loading screen
+  }
 
   return (
     <Wrapper>

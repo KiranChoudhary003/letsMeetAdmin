@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Wrapper from "./ProfilePagecss.js";
-import { constructNow } from "date-fns";
+// import { constructNow } from "date-fns";
 import axios from '../AxiosInstance';
+import LoadingScreen from "../loading"; // ✅ Importing the LoadingScreen component
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const ProfilePage = () => {
   const [attendee, setAttendee] = useState(location.state?.attendee || null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventList, setEventList] = useState([]);
-
+  const [loading, setLoading] = useState(true); // ✅ Track loading state
 
   useEffect(() => {
     if (!attendee) {
@@ -22,14 +23,18 @@ const ProfilePage = () => {
           setAttendee(data);
         } catch (error) {
           console.error("Error fetching attendee details:", error);
+        } finally {
+          setLoading(false); // ✅ Stop loading after fetch
         }
       };
       fetchAttendee();
+    } else {
+      setLoading(false); // ✅ Stop loading if attendee data already present
     }
   }, [id, attendee]);
 
   useEffect(() => {
-    if (!id) return; // guard clause
+    if (!id) return;
 
     const fetchEventList = async () => {
       try {
@@ -45,6 +50,11 @@ const ProfilePage = () => {
     fetchEventList();
   }, [id]);
 
+  // ✅ Show loading screen while fetching data
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   if (!attendee) {
     return (
       <p style={{ textAlign: "center", marginTop: "20px", fontSize: "20px" }}>
@@ -56,7 +66,7 @@ const ProfilePage = () => {
   const handleViewConnection = async (event) => {
     try {
       const response = await axios.get(`/users/${id}/${event.id}/connections`);
-      const data = response.data
+      const data = response.data;
 
       const updatedEvent = {
         ...event,
@@ -67,7 +77,7 @@ const ProfilePage = () => {
     } catch (error) {
       console.error("Error fetching event connections:", error);
     }
-  }
+  };
 
   return (
     <Wrapper>

@@ -4,63 +4,36 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import Wrapper from './style'
 import axios from '../AxiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
+import LoadingScreen from "../loading";
 
 const Security = () => {
-
-  const [isVisible, setIsVisible] = useState(null)
-  const [isBlock, setIsBlock] = useState({})
-  const [users, setUsers] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/users/block-status`);
-        if (response.data && response.data.users) {
-          const userResponse = response.data.users;
-
-          // Create block status mapping
-          const blockStatusMap = {};
-          userResponse.forEach(user => {
-            blockStatusMap[user.user_id] = user.block_status === "blocked" ? "Block" : "Unblock";
-          });
-
-          setUsers(userResponse);
-          setIsBlock(blockStatusMap);
-        }
-      } catch (error) {
-        console.log(`Error fetching the data`);
-      }
-    };
-
-    fetchData();
-  }, [])
+  const [isVisible, setIsVisible] = useState(null);
+  const [isBlock, setIsBlock] = useState({});
+  const [users, setUsers] = useState([]);
+  const [blockUsers, setBlockUsers] = useState([]); // ✅ Needed to render "Block Users"
+  const [loading, setLoading] = useState(true);
 
   const handleVisibility = (section) => {
-    setIsVisible(section)
-  }
+    setIsVisible(section);
+  };
 
   const handleClose = () => {
-    setIsVisible(null)
-  }
+    setIsVisible(null);
+  };
 
   const handleStatusChange = async (userId) => {
     const confirmAction = window.confirm("Are you sure you want to change the block status?");
-
     if (confirmAction) {
-      // Determine the new block status
       const currentStatus = isBlock[userId];
       const newStatus = currentStatus === "Block" ? "unblocked" : "blocked";
-
       try {
-        // Send the PUT request with headers ensuring JSON format
         await axios.put(`/users/block-status`, {
           id: userId,
           block_status: newStatus
         }, {
-          headers: { "Content-Type": "application/json" }  // ✅ Ensure request is JSON
+          headers: { "Content-Type": "application/json" }
         });
 
-        // Update the UI state
         setIsBlock((prev) => ({
           ...prev,
           [userId]: newStatus === "blocked" ? "Block" : "Unblock"
@@ -70,21 +43,37 @@ const Security = () => {
         toast.error("Failed to update block status!");
       }
     }
-  }
+  };
 
   const normalizeStatus = (status) => {
     if (!status) return "";
     const lower = status.toLowerCase();
     if (lower === "pending") return "pending";
-    if (lower === "in progress") return "in_progress";  // Replace space with underscore
+    if (lower === "in progress") return "in_progress";
     if (lower === "complete" || lower === "completed") return "complete";
-    return lower; // fallback just in case
+    return lower;
   };
 
   useEffect(() => {
-    axios.get(`/security/reports`)
-      .then(res => {
-        const reports = res.data.reports || [];
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        const [userRes, reportRes] = await Promise.all([
+          axios.get(`/users/block-status`),
+          axios.get(`/security/reports`)
+        ]);
+
+        if (userRes.data?.users) {
+          const userResponse = userRes.data.users;
+          const blockStatusMap = {};
+          userResponse.forEach(user => {
+            blockStatusMap[user.user_id] = user.block_status === "blocked" ? "Block" : "Unblock";
+          });
+          setIsBlock(blockStatusMap);
+          setBlockUsers(userResponse); // ✅ This was missing before
+        }
+
+        const reports = reportRes.data.reports || [];
         const formatted = reports.map(r => ({
           id: r.id,
           issue: r.reason,
@@ -92,12 +81,15 @@ const Security = () => {
           reportedBy: r.reported_by,
         }));
         setUsers(formatted);
-      })
-      .catch(err => {
-        console.error("Error fetching reports:", err);
-      });
-  }, []);
+      } catch (error) {
+        console.error("Error during data fetch:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchAllData();
+  }, []);
 
   const handleChange = (id, newStatus) => {
     const currentUser = users.find(u => u.id === id);
@@ -116,22 +108,24 @@ const Security = () => {
     }
   };
 
-  const updateStatus = (id, status) => {
+  const updateStatus = async (id, status) => {
     console.log("Updating report id:", id, "to status:", status);
-    axios.put(`/security/reports/update-status/${id}`, { status })
-      .then(() => {
-        setUsers(prevUsers =>
-          prevUsers.map(user =>
-            user.id === id ? { ...user, reportStatus: status } : user
-          )
-        );
-      })
-      .catch(err => {
-        console.error("Error updating status:", err);
-        toast.error("Failed to update status. Please try again.");
-      });
+    try {
+      await axios.put(`/security/reports/update-status/${id}`, { status });
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.id === id ? { ...user, reportStatus: status } : user
+        )
+      );
+      toast.success("Status updated successfully.");
+    } catch (err) {
+      console.error("Error updating status:", err);
+      toast.error("Failed to update status. Please try again.");
+    }
   };
 
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Wrapper>
@@ -173,7 +167,7 @@ const Security = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map((user, index) => (
+                      {blockUsers.map((user, index) => (
                         <tr key={user.user_id}>
                           <td>{index + 1}</td>
                           <td>{user.user_name}</td>
@@ -198,20 +192,13 @@ const Security = () => {
                 <h2>Admin Activities Content</h2>
                 <div className="scroll-container">
                   <table>
-                    <thead>
-                      <tr>
-
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-
-                      </tr>
-                    </tbody>
+                    <thead><tr></tr></thead>
+                    <tbody><tr></tr></tbody>
                   </table>
                 </div>
               </>
             )}
+
             {isVisible === 'reports' && (
               <>
                 <h2>Case Content</h2>
@@ -232,13 +219,15 @@ const Security = () => {
                           <td>{user.issue}</td>
                           <td>{user.reportStatus}</td>
                           <td>
-                            <button className="report-btn in-progress"
+                            <button
+                              className="report-btn in-progress"
                               onClick={() => handleChange(user.id, "in_progress")}
                               disabled={user.reportStatus !== "pending"}
                             >
                               In Progress
                             </button>
-                            <button className="report-btn completed"
+                            <button
+                              className="report-btn completed"
                               onClick={() => handleChange(user.id, "complete")}
                               disabled={user.reportStatus !== "in_progress"}
                             >
@@ -255,10 +244,9 @@ const Security = () => {
           </div>
         </div>
       )}
-
       <ToastContainer position="top-right" autoClose={1500} />
     </Wrapper>
-  )
-}
+  );
+};
 
-export default Security
+export default Security;

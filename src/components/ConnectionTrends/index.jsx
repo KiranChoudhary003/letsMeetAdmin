@@ -3,9 +3,11 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import Wrapper from './style';
 import { useNavigate } from 'react-router-dom';
 import axios from '../AxiosInstance';
+import LoadingScreen from "../loading";  // <-- Added import
 
 const ConnectionTrends = () => {
   const [eventData, setEventData] = useState([]);
+  const [loading, setLoading] = useState(true);  // <-- Added loading state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +21,8 @@ const ConnectionTrends = () => {
         }
       } catch (error) {
         console.error("Error fetching event connections:", error);
+      } finally {
+        setLoading(false);  // <-- Turn off loading when done
       }
     };
 
@@ -28,6 +32,8 @@ const ConnectionTrends = () => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  if (loading) return <LoadingScreen />;  // <-- Show loading screen while fetching
 
   return (
     <Wrapper>

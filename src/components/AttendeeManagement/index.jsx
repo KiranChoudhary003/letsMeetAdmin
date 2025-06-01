@@ -4,10 +4,12 @@ import { Button } from "@mui/material";
 import Wrapper from "./style";
 import { useNavigate } from "react-router-dom";
 import axios from '../AxiosInstance';
+import LoadingScreen from "../loading";
 
 const AttendeeManagement = () => {
 
   const [attendees, setAttendees] = useState([])
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,9 +24,11 @@ const AttendeeManagement = () => {
         }))
 
         setAttendees(formattedAttendees);
+        setLoading(false);
       }
       catch (error) {
         console.log(`Error in fetching ${error}`)
+        setLoading(false);
       }
     }
     fetchData()
@@ -36,6 +40,8 @@ const AttendeeManagement = () => {
   const filteredAttendees = attendees.filter((attendee) =>
     attendee.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Wrapper>

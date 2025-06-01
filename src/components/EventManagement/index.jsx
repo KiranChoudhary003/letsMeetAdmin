@@ -686,6 +686,7 @@ import { FaEdit, FaEye, FaSearch, FaTimes } from "react-icons/fa";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingScreen from "../loading";
 import Wrapper from './style';
 
 const EventManagement = () => {
@@ -701,6 +702,7 @@ const EventManagement = () => {
   const [isEyeModalOpen, setIsEyeModalOpen] = useState(false);
   const [editEvent, setEditEvent] = useState(null);
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [loading, setLoading] = useState(true);
   const tableRef = useRef(null);
 
   const [events, setEvents] = useState([])
@@ -806,6 +808,7 @@ const EventManagement = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`/events/all`);
         const data = response.data;
@@ -815,6 +818,8 @@ const EventManagement = () => {
         setEvents(eventList);
       } catch (error) {
         console.log(`Error fetching data: ${error}`);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -1235,6 +1240,10 @@ const EventManagement = () => {
       </>
     );
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
 
   return (

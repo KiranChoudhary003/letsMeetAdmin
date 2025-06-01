@@ -195,3 +195,15 @@ const App = () => {
 }
 
 export default App
+
+
+// import React from "react";
+
+// import LoadingScreen from "./components/loading";
+
+// const App = () => {
+//   return(
+//     <LoadingScreen/>
+// )
+// }
+// export default App;

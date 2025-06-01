@@ -161,11 +161,11 @@
 // };
 
 // export default Dashboard; 
-
 import axios from '../AxiosInstance';
 import { useEffect, useState } from 'react';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import Wrapper from './style';
+import LoadingScreen from "../loading";  // <-- Added import
 
 const Dashboard = () => {
   const [selectedYearType, setSelectedYearType] = useState('current'); // 'current' or 'previous'
@@ -175,18 +175,19 @@ const Dashboard = () => {
     totalConnections: 0,
     totalEvents: 0
   });
+  const [loading, setLoading] = useState(true); // <-- Added loading state
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth * 0.8,
     height: window.innerHeight * 0.4
   });
 
+
   // Fetch Data from API
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // <-- start loading
       try {
-
-
         const usersRes = await axios.get(`/users/count?year=${selectedYearType}`);
         const eventsRes = await axios.get(`/events/count?year=${selectedYearType}`);
         const connectionsRes = await axios.get(`/connections/count?year=${selectedYearType}`);
@@ -218,6 +219,8 @@ const Dashboard = () => {
         setTotals({ totalUsers, totalEvents, totalConnections });
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false); // <-- end loading
       }
     };
 
@@ -256,6 +259,8 @@ const Dashboard = () => {
 
     return Object.values(merged);
   };
+
+  if (loading) return <LoadingScreen />; // <-- Show loading screen while loading
 
   return (
     <Wrapper>
@@ -320,4 +325,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

@@ -395,11 +395,13 @@ import { FaEdit, FaSearch } from "react-icons/fa";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingScreen from "../loading";
 import Wrapper from './style';
 
 const AttendeeRoleManagement = () => {
     const [roles, setRoles] = useState([]);
     const [refreshFlag, setRefreshFlag] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [visibleEntries, setVisibleEntries] = useState(10);
     const [selectedRoles, setSelectedRoles] = useState([]);
@@ -577,12 +579,14 @@ const AttendeeRoleManagement = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users/attendee/roles`);
                 setRoles(response.data.roles || []);
             } catch (error) {
                 console.log(`Error fetching:`, error?.response?.data || error.message);
             }
+            setLoading(false);
         };
         fetchData();
         const tableElement = tableRef.current;
@@ -596,7 +600,9 @@ const AttendeeRoleManagement = () => {
         };
     }, [refreshFlag, handleScroll]);
 
-
+    if (loading) {
+        return <LoadingScreen />;
+    }
 
     return (
         <Wrapper>

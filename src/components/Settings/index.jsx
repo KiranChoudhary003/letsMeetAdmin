@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import Wrapper from './style';
 import axios from '../AxiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
+import LoadingScreen from '../loading'; // ✅ Import LoadingScreen
 
 const Settings = () => {
-
+  const [loading, setLoading] = useState(true); // ✅ Add loading state
   const [settings, setSettings] = useState({
     enabled: false,
     check_in_distance: ""
-  })
+  });
+
 
   // Fetch initial settings from backend
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // ✅ Set loading to true at start
       try {
         const connectionRes = await axios.get(`/settings/connection-status`);
         const distanceRes = await axios.get(`/settings/check-in-distance`);
@@ -23,6 +26,9 @@ const Settings = () => {
         });
       } catch (error) {
         console.error("Error fetching settings:", error);
+        toast.error("Failed to fetch settings.");
+      } finally {
+        setLoading(false); // ✅ Ensure loading ends
       }
     };
 
@@ -50,7 +56,7 @@ const Settings = () => {
       console.error("Error updating connection status:", error);
       toast.error("Failed to update connection status.");
     }
-  }
+  };
 
   // Handle input change
   const handleDistanceChange = (e) => {
@@ -63,26 +69,23 @@ const Settings = () => {
   // Save Settings to Backend
   const handleSave = async () => {
     try {
-      // Ensure values are correctly formatted
       const connectionStatusData = {
-        enabled: Boolean(settings.enabled) // Ensures it's `true` or `false`
+        enabled: Boolean(settings.enabled)
       };
 
       const distanceData = {
         check_in_distance: Number.isNaN(parseInt(settings.check_in_distance, 10))
           ? 0
-          : parseInt(settings.check_in_distance, 10) // Ensures it's a valid integer
+          : parseInt(settings.check_in_distance, 10)
       };
 
       console.log("Sending connection status:", connectionStatusData);
       console.log("Sending check-in distance:", distanceData);
 
-      // Send the updated connection status
       await axios.put(`/settings/connection-status`, connectionStatusData, {
         headers: { "Content-Type": "application/json" }
       });
 
-      // Send the updated check-in distance
       await axios.put(`/settings/check-in-distance`, distanceData, {
         headers: { "Content-Type": "application/json" }
       });
@@ -94,6 +97,10 @@ const Settings = () => {
     }
   };
 
+  // Show loading screen until settings are fetched
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Wrapper>
