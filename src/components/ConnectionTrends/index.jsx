@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Wrapper from './style';
 import { useNavigate } from 'react-router-dom';
@@ -8,10 +8,14 @@ import LoadingScreen from "../loading";  // <-- Added import
 const ConnectionTrends = () => {
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(true);  // <-- Added loading state
+  const isFirstLoad = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventConnections = async () => {
+      if (isFirstLoad.current) {
+        setLoading(true); // Show loading only on first mount
+      }
       try {
         const response = await axios.get(`/events/total/connections`);
         const data = response.data;
@@ -22,12 +26,16 @@ const ConnectionTrends = () => {
       } catch (error) {
         console.error("Error fetching event connections:", error);
       } finally {
-        setLoading(false);  // <-- Turn off loading when done
+        if (isFirstLoad.current) {
+          setLoading(false);  // Turn off loading only after first fetch
+          isFirstLoad.current = false; // Mark initial load as done
+        }
       }
     };
 
     fetchEventConnections();
   }, []);
+
 
   const handleBack = () => {
     navigate(-1);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import Wrapper from './style'
@@ -12,7 +12,7 @@ const Security = () => {
   const [users, setUsers] = useState([]);
   const [blockUsers, setBlockUsers] = useState([]); // ✅ Needed to render "Block Users"
   const [loading, setLoading] = useState(true);
-
+  const isFirstLoad = useRef(true);
   const handleVisibility = (section) => {
     setIsVisible(section);
   };
@@ -56,7 +56,9 @@ const Security = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      setLoading(true);
+      if (isFirstLoad.current) {
+        setLoading(true); // Show loading only on first mount
+      }
       try {
         const [userRes, reportRes] = await Promise.all([
           axios.get(`/users/block-status`),
@@ -84,12 +86,16 @@ const Security = () => {
       } catch (error) {
         console.error("Error during data fetch:", error);
       } finally {
-        setLoading(false);
+        if (isFirstLoad.current) {
+          setLoading(false);
+          isFirstLoad.current = false; // Mark initial load done
+        }
       }
     };
 
     fetchAllData();
   }, []);
+
 
   const handleChange = (id, newStatus) => {
     const currentUser = users.find(u => u.id === id);

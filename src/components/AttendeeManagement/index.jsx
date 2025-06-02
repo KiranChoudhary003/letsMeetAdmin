@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Button } from "@mui/material";
 import Wrapper from "./style";
@@ -10,29 +10,38 @@ const AttendeeManagement = () => {
 
   const [attendees, setAttendees] = useState([])
   const [loading, setLoading] = useState(true);
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (isFirstLoad.current) {
+        setLoading(true); // Show loading only on first mount
+      }
+
       try {
-        const response = await axios.get(`/users/stats`)
+        const response = await axios.get(`/users/stats`);
 
         const formattedAttendees = response.data.data.map(user => ({
           id: user.user_id,
           name: `${user.first_name} ${user.last_name}`,
           events: user.total_attended_events,
           connections: user.total_connections
-        }))
+        }));
 
         setAttendees(formattedAttendees);
-        setLoading(false);
+      } catch (error) {
+        console.log(`Error in fetching ${error}`);
+      } finally {
+        if (isFirstLoad.current) {
+          setLoading(false);
+          isFirstLoad.current = false; // Mark first load complete
+        }
       }
-      catch (error) {
-        console.log(`Error in fetching ${error}`)
-        setLoading(false);
-      }
-    }
-    fetchData()
-  }, [])
+    };
+
+    fetchData();
+  }, []);
+
 
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();

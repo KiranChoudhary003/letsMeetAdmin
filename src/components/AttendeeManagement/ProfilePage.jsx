@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Wrapper from "./ProfilePagecss.js";
 // import { constructNow } from "date-fns";
@@ -13,10 +13,14 @@ const ProfilePage = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventList, setEventList] = useState([]);
   const [loading, setLoading] = useState(true); // ✅ Track loading state
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
     if (!attendee) {
       const fetchAttendee = async () => {
+        if (isFirstLoad.current) {
+          setLoading(true); // Show loading only on first mount
+        }
         try {
           const response = await axios.get(`/users/${id}`);
           const data = response.data;
@@ -24,14 +28,18 @@ const ProfilePage = () => {
         } catch (error) {
           console.error("Error fetching attendee details:", error);
         } finally {
-          setLoading(false); // ✅ Stop loading after fetch
+          if (isFirstLoad.current) {
+            setLoading(false); // Stop loading only on initial fetch
+            isFirstLoad.current = false; // Mark initial fetch complete
+          }
         }
       };
       fetchAttendee();
     } else {
-      setLoading(false); // ✅ Stop loading if attendee data already present
+      setLoading(false); // Stop loading if attendee is already available
     }
   }, [id, attendee]);
+
 
   useEffect(() => {
     if (!id) return;

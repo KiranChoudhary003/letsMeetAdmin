@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Wrapper from "./style";
 import {
   BarChart,
@@ -22,9 +22,13 @@ const UserEngagement = () => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true); // ✅ Loading state
   const navigate = useNavigate();
+  const isFirstLoad = useRef(true);
 
   useEffect(() => {
-    setLoading(true); // ✅ Start loading when fetching events
+    if (isFirstLoad.current) {
+      setLoading(true); // Show loading only on first mount
+    }
+
     axios
       .get(`/events/eventlist/${selectedTimePeriod}`)
       .then((res) => {
@@ -48,6 +52,7 @@ const UserEngagement = () => {
       })
       .finally(() => {
         setLoading(false); // ✅ Done loading events
+        isFirstLoad.current = false; // Mark initial load done
       });
   }, [selectedTimePeriod]);
 

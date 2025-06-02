@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell, Legend, ResponsiveContainer
@@ -12,15 +12,19 @@ import LoadingScreen from "../loading";  // <-- Import LoadingScreen
 const EventAnalytics = () => {
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(true);  // <-- Loading state
+  const isFirstLoad = useRef(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventConnections = async () => {
+      if (isFirstLoad.current) {
+        setLoading(true); // Show loading only on first mount
+      }
       try {
-        setLoading(true);  // start loading
+        // Removed redundant setLoading(true) here
 
         const response = await axios.get(`/events/total/connections`);
-        const data = response.data
+        const data = response.data;
 
         if (data.events) {
           const sortedTop3 = data.events
@@ -36,12 +40,16 @@ const EventAnalytics = () => {
       } catch (error) {
         console.error("Error fetching event analytics:", error);
       } finally {
-        setLoading(false);  // end loading
+        if (isFirstLoad.current) {
+          setLoading(false);  // end loading only once on initial fetch
+          isFirstLoad.current = false; // mark initial load done
+        }
       }
     };
 
     fetchEventConnections();
   }, []);
+
 
   if (loading) return <LoadingScreen />;  // show loading while fetching
 

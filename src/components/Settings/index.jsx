@@ -15,7 +15,6 @@ const Settings = () => {
   // Fetch initial settings from backend
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // ✅ Set loading to true at start
       try {
         const connectionRes = await axios.get(`/settings/connection-status`);
         const distanceRes = await axios.get(`/settings/check-in-distance`);
