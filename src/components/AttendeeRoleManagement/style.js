@@ -422,7 +422,7 @@ const Wrapper = styled.div`
 
   /* table layout css */
   .table-container {
-  max-height: 495px;
+  max-height: 490px;
   overflow-y: auto;
   box-sizing: border-box;
   table-layout: fixed;

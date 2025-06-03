@@ -363,7 +363,7 @@ const EventManagement = () => {
 
       setToggleMessage({ id, message: `Event ${updatedStatus}!` });
       setTimeout(() => setToggleMessage(null), 2000);
-      toast.success(`Event ${updatedStatus}!`);
+      toast.success(`Event ${updatedStatus} Successfully.`);
     } catch (error) {
       console.error("Failed to update event status:", error);
       toast.error("Failed to update event status");

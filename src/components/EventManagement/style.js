@@ -30,7 +30,6 @@ const Wrapper = styled.div`
       display : flex;
       align-items: center;
       gap: 5px;
-
     }
 
     .mass-delete-placeholder {
@@ -67,9 +66,55 @@ const Wrapper = styled.div`
     width: 190px;
   }
 
+  
+  /* search box css */
+  /* Search Container */
+  .search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: flex-end;
+    position: relative;
+  }
+
+  /* Search Input */
+  .search-input {
+    width: 280px;
+    padding: 12px 45px 12px 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    background: #f9f9f9;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Input Focus Effect */
+  .search-input:focus {
+    border-color: #007bff;
+    background: white;
+    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
+  }
+
+  /* Search Icon */
+  .search-icon {
+    position: relative;
+    right: 30px;
+    color: #777;
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.3s ease-in-out;
+  }
+
+  /* Search Icon Hover Effect */
+  .search-icon:hover {
+    color: #007bff;
+  }
+
   /* table layout css */
   .table-container {
-    max-height: 495px;
+    max-height: 490px;
     overflow-y: auto;
     box-sizing: border-box;
     table-layout: fixed;
@@ -511,51 +556,6 @@ const Wrapper = styled.div`
       opacity: 1;
       transform: scale(1);
     }
-  }
-
-  /* search box css */
-  /* Search Container */
-  .search-container {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: flex-end;
-    position: relative;
-  }
-
-  /* Search Input */
-  .search-input {
-    width: 280px;
-    padding: 12px 45px 12px 15px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-    background: #f9f9f9;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Input Focus Effect */
-  .search-input:focus {
-    border-color: #007bff;
-    background: white;
-    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
-  }
-
-  /* Search Icon */
-  .search-icon {
-    position: relative;
-    right: 30px;
-    color: #777;
-    cursor: pointer;
-    font-size: 18px;
-    transition: color 0.3s ease-in-out;
-  }
-
-  /* Search Icon Hover Effect */
-  .search-icon:hover {
-    color: #007bff;
   }
 
   @keyframes spin {
