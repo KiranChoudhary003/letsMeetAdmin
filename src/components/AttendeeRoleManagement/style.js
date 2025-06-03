@@ -350,63 +350,74 @@
 // export default Wrapper;
 
 // style.js
-
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Wrapper = styled.div`
-  cursor : default;
-/*  events name */
+  cursor: default;
+  /*  events name */
   .attendee-role {
-    margin : 10px 10px 9px 10px;
-    h1{
-      font-size : 30px;
+    margin: 10px 10px 9px 10px;
+    display: flex;
+    justify-content: space-between;
+    h1 {
+      font-size: 30px;
     }
-    display : flex;
-    justify-content : space-between;
-    
-    .mass-delete  {
-    background-color:rgb(244, 67, 54);;
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 4px;
-    align-items :center;
-    font-size : 15px;
-    min-width : 70px;
+
+    .button-placeholder {
+      display: flex;
+      gap: 10px; /* space between buttons */
+      align-items: center;
+    }
+
+    /* Delete button style */
+    .mass-delete {
+      background-color: rgb(244, 67, 54);
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      min-width: 70px;
+      display : flex;
+      align-items: center;
+      gap: 5px;
+
+    }
+
+    .mass-delete-placeholder {
+      width: 108px; /* match the approximate width of the delete button */
+      height: 36px; /* match the height */
+    }
+
+    /* Add button style */
+    .add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgb(177, 179, 215);
+      color: black;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      gap: 5px;
+    }
   }
-}
-  
-  /* add button css */
-  .add-btn {
-  display: flex;          /* Enables flexbox */
-  align-items: center;    /* Aligns text and icon in center vertically */
-  justify-content: center; /* Centers content horizontally */
-  background-color: rgb(177, 179, 215); /* Button color */
-  color: black;           /* Text color */
-  font-size: 16px;        /* Adjust text size */
-  font-weight: bold;      /* Make text bold */
-  border: none;           /* Removes border */
-  padding: 8px 15px;      /* Adds space inside the button */
-  border-radius: 5px;     /* Smooth rounded corners */
-  cursor: pointer;        /* Cursor pointer for interaction */
-  gap: 5px;
-  margin-left : 95px;
-  position : sticky;
-}
 
-/* Optional: Add hover effect for better user experience */
-.add-btn:hover {
-  background-color: rgb(150, 152, 190); /* Slightly darker shade */
-}
+  /* Optional: Add hover effect for better user experience */
+  .add-btn:hover {
+    background-color: rgb(150, 152, 190); /* Slightly darker shade */
+  }
 
-
-/* button class css */
-.button-class{
-  display : flex;
-  gap : 10px;
-  width : 190px;
-}
+  /* button class css */
+  .button-class {
+    display: flex;
+    gap: 10px;
+    width: 190px;
+  }
 
 
   /* table layout css */

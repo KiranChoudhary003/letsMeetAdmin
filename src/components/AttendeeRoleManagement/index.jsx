@@ -1,5 +1,5 @@
-import axios from '../AxiosInstance';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import axios from "../AxiosInstance";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { FaEdit, FaSearch } from "react-icons/fa";
@@ -7,7 +7,7 @@ import { MdAddCircle, MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingScreen from "../loading";
-import Wrapper from './style';
+import Wrapper from "./style";
 
 const AttendeeRoleManagement = () => {
     const [roles, setRoles] = useState([]);
@@ -22,7 +22,6 @@ const AttendeeRoleManagement = () => {
     const [newRole, setNewRole] = useState({ role_name: "" });
     const tableRef = useRef(null);
     const isFirstLoad = useRef(true);
-
 
     const handleScroll = useCallback(() => {
         const tableElement = tableRef.current;
@@ -44,21 +43,22 @@ const AttendeeRoleManagement = () => {
 
     const handleSelectAll = useCallback(() => {
         setSelectedRoles((prevSelected) =>
-            prevSelected.length === roles.length ? [] : roles.map(role => role.id)
+            prevSelected.length === roles.length ? [] : roles.map((role) => role.id)
         );
     }, [roles]);
 
-
-    const handleEdit = useCallback((id) => {
-        const rolesEdit = roles.find((role) => role.id === id);
-        setEditedRoles(rolesEdit);
-        setIsModalOpen(true);
-    }, [roles]);
+    const handleEdit = useCallback(
+        (id) => {
+            const rolesEdit = roles.find((role) => role.id === id);
+            setEditedRoles(rolesEdit);
+            setIsModalOpen(true);
+        },
+        [roles]
+    );
 
     const handleInputChange = (field, value) => {
         setEditedRoles((prev) => ({ ...prev, [field]: value }));
     };
-
 
     const handleCancel = useCallback(() => {
         setIsModalOpen(false);
@@ -68,17 +68,19 @@ const AttendeeRoleManagement = () => {
     const handleSave = useCallback(async () => {
         try {
             await axios.put(`/users/attendee/roles/${editedRoles.id}`, editedRoles, {
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
             });
             setIsModalOpen(false);
-            setRefreshFlag(prev => !prev);
+            setRefreshFlag((prev) => !prev);
             toast.success("Successfully Edited!");
         } catch (error) {
-            console.error("Error updating role:", error?.response?.data || error.message);
+            console.error(
+                "Error updating role:",
+                error?.response?.data || error.message
+            );
             toast.error("Failed to update role");
         }
     }, [editedRoles, setIsModalOpen, setRefreshFlag]);
-
 
     const handleDelete = (id) => {
         confirmAlert({
@@ -90,18 +92,27 @@ const AttendeeRoleManagement = () => {
                     autoFocus: "true",
                     onClick: async () => {
                         try {
-                            const response = await axios.delete(`/users/attendee/roles/${id}`);
-                            toast.success(response.data?.message || "Role Deleted Successfully");
-                            setSelectedRoles((prev) => prev.filter((roleID) => roleID !== id));
-                            setRefreshFlag(prev => !prev);
+                            const response = await axios.delete(
+                                `/users/attendee/roles/${id}`
+                            );
+                            toast.success(
+                                response.data?.message || "Role Deleted Successfully"
+                            );
+                            setSelectedRoles((prev) =>
+                                prev.filter((roleID) => roleID !== id)
+                            );
+                            setRefreshFlag((prev) => !prev);
                         } catch (error) {
-                            console.error("Error deleting event:", error?.response?.data || error.message);
+                            console.error(
+                                "Error deleting event:",
+                                error?.response?.data || error.message
+                            );
                             toast.error("Error deleting event. Please try again.");
                         }
-                    }
+                    },
                 },
-                { label: "No" }
-            ]
+                { label: "No" },
+            ],
         });
     };
 
@@ -125,7 +136,10 @@ const AttendeeRoleManagement = () => {
                                 await axios.delete(`/users/attendee/roles/${id}`);
                                 successCount++;
                             } catch (error) {
-                                console.error(`Error deleting role ID ${id}:`, error?.response?.data || error.message);
+                                console.error(
+                                    `Error deleting role ID ${id}:`,
+                                    error?.response?.data || error.message
+                                );
                                 failureCount++;
                             }
                         }
@@ -136,17 +150,15 @@ const AttendeeRoleManagement = () => {
                             toast.error(`${failureCount} role(s) failed to delete.`);
                         }
                         setSelectedRoles([]);
-                        setRefreshFlag(prev => !prev);
-                    }
+                        setRefreshFlag((prev) => !prev);
+                    },
                 },
                 {
-                    label: "No"
-                }
-            ]
+                    label: "No",
+                },
+            ],
         });
     };
-
-
 
     const handleAddNewRole = () => {
         setIsVisible("addRole");
@@ -155,27 +167,36 @@ const AttendeeRoleManagement = () => {
     const handleAddRole = useCallback(async () => {
         const { role_name } = newRole;
         if (!role_name.trim()) {
-            toast.error('Fill the required Role name');
+            toast.error("Fill the required Role name");
             return;
         }
         try {
-            await axios.post(`/users/attendee/roles`, { role_name }, {
-                headers: { 'Content-Type': 'application/json' }
-            });
+            await axios.post(
+                `/users/attendee/roles`,
+                { role_name },
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
             setIsVisible(null);
             setNewRole({ role_name: "" });
-            setRefreshFlag(prev => !prev);
+            setRefreshFlag((prev) => !prev);
             toast.success("Role added successfully!");
         } catch (error) {
-            console.error("Error adding role:", error?.response?.data || error.message);
+            console.error(
+                "Error adding role:",
+                error?.response?.data || error.message
+            );
             toast.error("Failed to add role. Please try again.");
         }
     }, [newRole, setIsVisible, setNewRole, setRefreshFlag]);
 
-
     const highlightMatch = (text, query) => {
         if (!query) return text;
-        const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        const regex = new RegExp(
+            `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+            "gi"
+        );
         const parts = text.split(regex);
         return (
             <>
@@ -186,9 +207,11 @@ const AttendeeRoleManagement = () => {
         );
     };
 
-
-    const filteredRoles = useMemo(() =>
-        roles.filter(role => role.role_name?.toLowerCase().includes(searchQuery.toLowerCase())),
+    const filteredRoles = useMemo(
+        () =>
+            roles.filter((role) =>
+                role.role_name?.toLowerCase().includes(searchQuery.toLowerCase())
+            ),
         [roles, searchQuery]
     );
 
@@ -214,11 +237,11 @@ const AttendeeRoleManagement = () => {
 
         const tableElement = tableRef.current;
         if (tableElement) {
-            tableElement.addEventListener('scroll', handleScroll);
+            tableElement.addEventListener("scroll", handleScroll);
         }
         return () => {
             if (tableElement) {
-                tableElement.removeEventListener('scroll', handleScroll);
+                tableElement.removeEventListener("scroll", handleScroll);
             }
         };
     }, [refreshFlag, handleScroll]);
@@ -245,20 +268,26 @@ const AttendeeRoleManagement = () => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [isModalOpen, isVisible, editedRoles, handleAddRole, handleCancel, handleSave])
-
+    }, [
+        isModalOpen,
+        isVisible,
+        editedRoles,
+        handleAddRole,
+        handleCancel,
+        handleSave,
+    ]);
 
     if (loading) return <LoadingScreen />;
 
     return (
         <Wrapper>
-            <section className='attendee-role'>
+            <section className="attendee-role">
                 <h1>Attendee Roles</h1>
                 <div>
                     <div className="search-container">
                         <input
                             type="text"
-                            placeholder="Search event by name..."
+                            placeholder="Search roles..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="search-input"
@@ -266,11 +295,19 @@ const AttendeeRoleManagement = () => {
                         <FaSearch className="search-icon" />
                     </div>
                 </div>
-                <div className='button-class'>
-                    {selectedRoles.length > 1 && (
-                        <button className='mass-delete' onClick={handleMassDelete}>Delete</button>
-                    )}
-                    <button className='add-btn' onClick={handleAddNewRole}>Add <MdAddCircle size={26} /></button>
+                <div className="button-wrapper">
+                    <div className="button-placeholder">
+                        {selectedRoles.length > 1 ? (
+                            <button className="mass-delete" onClick={handleMassDelete}>
+                                Delete <MdDelete size={26} />
+                            </button>
+                        ) : (
+                            <div className="mass-delete-placeholder" />
+                        )}
+                        <button className="add-btn" onClick={handleAddNewRole}>
+                            Add <MdAddCircle size={26} />
+                        </button>
+                    </div>
                 </div>
             </section>
             <section className="table-container" ref={tableRef}>
@@ -280,7 +317,10 @@ const AttendeeRoleManagement = () => {
                             <th className="column checkbox">
                                 <input
                                     type="checkbox"
-                                    checked={filteredRoles.length > 0 && selectedRoles.length === filteredRoles.length}
+                                    checked={
+                                        filteredRoles.length > 0 &&
+                                        selectedRoles.length === filteredRoles.length
+                                    }
                                     disabled={filteredRoles.length === 0}
                                     onChange={handleSelectAll}
                                 />
@@ -308,10 +348,19 @@ const AttendeeRoleManagement = () => {
                                         />
                                     </td>
                                     <td className="column id">{role.id}</td>
-                                    <td className="column name">{highlightMatch(role.role_name, searchQuery)}</td>
+                                    <td className="column name">
+                                        {highlightMatch(role.role_name, searchQuery)}
+                                    </td>
                                     <td className="column actions">
-                                        <p className="edit-btn" onClick={() => handleEdit(role.id)}><FaEdit /></p>
-                                        <p className="delete-btn" onClick={() => handleDelete(role.id)}><MdDelete /></p>
+                                        <p className="edit-btn" onClick={() => handleEdit(role.id)}>
+                                            <FaEdit />
+                                        </p>
+                                        <p
+                                            className="delete-btn"
+                                            onClick={() => handleDelete(role.id)}
+                                        >
+                                            <MdDelete />
+                                        </p>
                                     </td>
                                 </tr>
                             ))

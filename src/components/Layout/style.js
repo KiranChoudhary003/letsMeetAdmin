@@ -8,31 +8,42 @@ const Wrapper = styled.div`
   .home {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Full viewport height */
+    height: 100vh;
     overflow: hidden;
   }
 
   .heading {
     display: flex;
-    flex: 1; /* Take available vertical space */
+    flex: 1;
     flex-direction: row;
     width: 100%;
     overflow: hidden;
-    min-height: 0; /* Allow .main-content to shrink */
+    min-height: 0;
   }
 
   .menu {
     width: 210px;
     flex-shrink: 0;
     background: rgb(177, 179, 215);
-    height: 100%; /* Fill vertical space */
+    height: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: width 0.3s ease;
   }
 
   .menu h1 {
     font-size: 25px;
     padding: 20px;
-    width: 210px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu .icon {
+    font-size: 24px;
+    margin: 20px 0;
+    cursor: pointer;
   }
 
   .main-content {
@@ -41,7 +52,7 @@ const Wrapper = styled.div`
     flex-grow: 1;
     min-width: 0;
     min-height: 0;
-    overflow: hidden; /* Contain scroll inside .outlet */
+    overflow: hidden;
   }
 
   .header {
@@ -51,9 +62,8 @@ const Wrapper = styled.div`
 
   .outlet {
     flex-grow: 1;
-    overflow-y: auto;
-    padding: 20px;
-    min-height: 0; /* Prevent overflow bug */
+    min-height: 0;
+    overflow-y : auto;
   }
 
   .footer {
@@ -65,18 +75,12 @@ const Wrapper = styled.div`
 
   /* Responsive layout */
   @media (max-width: 768px) {
-    .heading {
-      flex-direction: column;
-    }
-
     .menu {
-      width: 100%;
-      display: none; /* Optional: replace with toggle menu for mobile */
+      width: 150px; /* Show only icons */
     }
 
     .menu h1 {
-      width: 100%;
-      text-align: center;
+      display: none; /* Hide text heading */
     }
 
     .main-content {

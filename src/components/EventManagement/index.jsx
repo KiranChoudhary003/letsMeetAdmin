@@ -1,18 +1,17 @@
-import axios from '../AxiosInstance';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import axios from "../AxiosInstance";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import DatePicker from 'react-datepicker';
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaEdit, FaEye, FaSearch, FaTimes } from "react-icons/fa";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingScreen from "../loading";
-import Wrapper from './style';
+import Wrapper from "./style";
 
 const EventManagement = () => {
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [showEvent, setShowEvent] = useState(null);
@@ -28,7 +27,7 @@ const EventManagement = () => {
   const tableRef = useRef(null);
   const isFirstLoad = useRef(true);
 
-  const [events, setEvents] = useState([])
+  const [events, setEvents] = useState([]);
 
   const [newEvent, setNewEvent] = useState({
     name: "",
@@ -43,7 +42,6 @@ const EventManagement = () => {
     banner: null,
   });
 
-
   const handleSaveEvent = useCallback(async () => {
     const {
       name,
@@ -55,15 +53,17 @@ const EventManagement = () => {
       longitude,
       web_page_url,
       status,
-      banner
+      banner,
     } = newEvent;
 
     if (
       !name.trim() ||
       !start_date_time ||
-      !(start_date_time instanceof Date) || isNaN(start_date_time.getTime()) ||
+      !(start_date_time instanceof Date) ||
+      isNaN(start_date_time.getTime()) ||
       !end_date_time ||
-      !(end_date_time instanceof Date) || isNaN(end_date_time.getTime()) ||
+      !(end_date_time instanceof Date) ||
+      isNaN(end_date_time.getTime()) ||
       !venue.trim() ||
       !description.trim() ||
       !latitude.trim() ||
@@ -91,17 +91,13 @@ const EventManagement = () => {
     }
 
     try {
-      const response = await axios.post(
-        `/events/create`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
+      const response = await axios.post(`/events/create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      setRefreshFlag(prev => !prev);
+      setRefreshFlag((prev) => !prev);
 
       if (response.data && response.data.message) {
         toast.success("Event added successfully!");
@@ -123,7 +119,6 @@ const EventManagement = () => {
         web_page_url: "",
         banner: null,
       });
-
     } catch (error) {
       toast.error("Failed to add event. Please try again.");
     }
@@ -153,10 +148,6 @@ const EventManagement = () => {
     fetchData();
   }, [refreshFlag]);
 
-
-
-
-
   const handleScroll = useCallback(() => {
     const tableElement = tableRef.current;
     if (!tableElement) return;
@@ -167,10 +158,7 @@ const EventManagement = () => {
     if (scrollTop + clientHeight >= scrollHeight - 20) {
       setVisibleEntries((prev) => Math.min(prev + 10, events.length));
     }
-
-
   }, [events.length]);
-
 
   const handleEditSave = useCallback(async () => {
     const {
@@ -204,7 +192,10 @@ const EventManagement = () => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("description", description);
-      formData.append("start_date_time", new Date(start_date_time).toISOString());
+      formData.append(
+        "start_date_time",
+        new Date(start_date_time).toISOString()
+      );
       formData.append("end_date_time", new Date(end_date_time).toISOString());
       formData.append("venue", venue);
       formData.append("latitude", latitude);
@@ -216,35 +207,29 @@ const EventManagement = () => {
         formData.append("banner", banner);
       }
 
-      const response = await axios.put(
-        `/events/${id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.put(`/events/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       const updatedEvent = response.data?.id ? response.data : editedEvent;
 
-      setEvents(prevEvents =>
-        prevEvents.map(event =>
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
           event.id === id ? { ...event, ...updatedEvent } : event
         )
       );
 
       setIsModalOpen(false);
       setEditedEvent(null);
-      setRefreshFlag(prev => !prev);
+      setRefreshFlag((prev) => !prev);
       toast.success("Successfully Edited!");
     } catch (error) {
       console.error("Error updating event:", error);
       toast.error("Failed to update event");
     }
   }, [editedEvent, setEvents, setEditedEvent, setIsModalOpen]);
-
-
 
   const isEventChanged = (original, edited) => {
     if (!original || !edited) return false;
@@ -256,7 +241,7 @@ const EventManagement = () => {
       "latitude",
       "longitude",
       "web_page_url",
-      "status"
+      "status",
     ];
 
     for (const key of keysToCheck) {
@@ -272,31 +257,33 @@ const EventManagement = () => {
       return !isNaN(aTime) && !isNaN(bTime) && aTime !== bTime;
     };
 
-    if (dateChanged(original.start_date_time, edited.start_date_time)) return true;
+    if (dateChanged(original.start_date_time, edited.start_date_time))
+      return true;
     if (dateChanged(original.end_date_time, edited.end_date_time)) return true;
 
     // Updated banner comparison
     const bannerChanged =
       edited.banner instanceof File ||
-      (typeof original.banner === "string" && typeof edited.banner === "string" && original.banner !== edited.banner);
+      (typeof original.banner === "string" &&
+        typeof edited.banner === "string" &&
+        original.banner !== edited.banner);
 
     if (bannerChanged) return true;
 
     return false; // No changes detected
   };
 
-
   useEffect(() => {
     const tableElement = tableRef.current;
 
     // Scroll handling
     if (tableElement) {
-      tableElement.addEventListener('scroll', handleScroll);
+      tableElement.addEventListener("scroll", handleScroll);
     }
 
     // Keydown handling
     const handleKeyDown = (e) => {
-      const isTextarea = e.target.tagName === 'TEXTAREA';
+      const isTextarea = e.target.tagName === "TEXTAREA";
 
       if (e.key === "Enter" && !isTextarea) {
         if (isAddModalOpen) {
@@ -322,7 +309,7 @@ const EventManagement = () => {
     // Cleanup function
     return () => {
       if (tableElement) {
-        tableElement.removeEventListener('scroll', handleScroll);
+        tableElement.removeEventListener("scroll", handleScroll);
       }
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -338,17 +325,18 @@ const EventManagement = () => {
     handleSaveEvent,
   ]);
 
-
-
   const handleToggle = async (id) => {
     const eventToUpdate = events.find((e) => e.id === id);
     if (!eventToUpdate) return;
 
-    const updatedStatus = eventToUpdate.status === "enable" ? "disable" : "enable";
+    const updatedStatus =
+      eventToUpdate.status === "enable" ? "disable" : "enable";
 
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
-        event.id === id ? { ...event, status: updatedStatus, isLoading: true } : event
+        event.id === id
+          ? { ...event, status: updatedStatus, isLoading: true }
+          : event
       )
     );
 
@@ -367,7 +355,9 @@ const EventManagement = () => {
 
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
-          event.id === id ? { ...event, ...response.data, isLoading: false } : event
+          event.id === id
+            ? { ...event, ...response.data, isLoading: false }
+            : event
         )
       );
 
@@ -380,12 +370,13 @@ const EventManagement = () => {
 
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
-          event.id === id ? { ...event, status: eventToUpdate.status, isLoading: false } : event
+          event.id === id
+            ? { ...event, status: eventToUpdate.status, isLoading: false }
+            : event
         )
       );
     }
   };
-
 
   const ToggleSlider = ({ id, isActive, onToggle, isLoading }) => {
     return (
@@ -394,7 +385,9 @@ const EventManagement = () => {
           <div className="toggle-message">{toggleMessage.message}</div>
         )}
         <div
-          className={`toggle-switch ${isActive ? "enabled" : "disabled"} ${isLoading ? "loading" : ""}`}
+          className={`toggle-switch ${isActive ? "enabled" : "disabled"} ${
+            isLoading ? "loading" : ""
+          }`}
           onClick={!isLoading ? () => onToggle(id) : null} // Prevent click when loading
           style={{ cursor: isLoading ? "not-allowed" : "pointer" }} // Visual feedback
         >
@@ -404,11 +397,11 @@ const EventManagement = () => {
     );
   };
 
-
-
   const handleSelectEvent = (id) => {
     setSelectedEvents((prev) =>
-      prev.includes(id) ? prev.filter(eventId => eventId !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((eventId) => eventId !== id)
+        : [...prev, id]
     );
   };
 
@@ -416,10 +409,9 @@ const EventManagement = () => {
     if (selectedEvents.length === events.length) {
       setSelectedEvents([]);
     } else {
-      setSelectedEvents(events.map(event => event.id));
+      setSelectedEvents(events.map((event) => event.id));
     }
   };
-
 
   const handleDelete = (id) => {
     confirmAlert({
@@ -440,7 +432,9 @@ const EventManagement = () => {
 
               // Update local state
               setEvents((prev) => prev.filter((event) => event.id !== id));
-              setSelectedEvents((prev) => prev.filter((eventId) => eventId !== id));
+              setSelectedEvents((prev) =>
+                prev.filter((eventId) => eventId !== id)
+              );
 
               // Trigger re-fetch if needed (optional)
               setRefreshFlag((prev) => !prev);
@@ -454,7 +448,6 @@ const EventManagement = () => {
       ],
     });
   };
-
 
   const handleMassDelete = async () => {
     if (selectedEvents.length === 0) {
@@ -471,29 +464,32 @@ const EventManagement = () => {
           autoFocus: true,
           onClick: async () => {
             try {
-              await axios.post(
-                `/events/deletemass`, { ids: selectedEvents }
-              );
+              await axios.post(`/events/deletemass`, { ids: selectedEvents });
 
-              const updatedEvents = events.filter(event => !selectedEvents.includes(event.id));
+              const updatedEvents = events.filter(
+                (event) => !selectedEvents.includes(event.id)
+              );
               setEvents(updatedEvents);
               setSelectedEvents([]); // Clear selected
-              toast.success(`${selectedEvents.length} event(s) deleted successfully!`);
+              toast.success(
+                `${selectedEvents.length} event(s) deleted successfully!`
+              );
             } catch (error) {
-              console.error("Mass delete error:", error.response?.data || error.message);
+              console.error(
+                "Mass delete error:",
+                error.response?.data || error.message
+              );
               toast.error("Failed to delete events.");
             }
-          }
+          },
         },
-        { label: "No" }
-      ]
+        { label: "No" },
+      ],
     });
   };
 
-
-
   const handleEdit = (id) => {
-    const eventToEdit = events.find(event => event.id === id);
+    const eventToEdit = events.find((event) => event.id === id);
     setEditEvent(eventToEdit);
     setEditedEvent({ ...eventToEdit }); // Create a copy for editing
     setIsModalOpen(true); // Open modal
@@ -503,9 +499,10 @@ const EventManagement = () => {
     const { name, value } = e.target;
     setEditedEvent((prev) => ({
       ...prev,
-      [name]: name === "start_date_time" || name === "end_date_time"
-        ? formatDate(value) // Format date correctly
-        : value,
+      [name]:
+        name === "start_date_time" || name === "end_date_time"
+          ? formatDate(value) // Format date correctly
+          : value,
     }));
   };
 
@@ -542,7 +539,7 @@ const EventManagement = () => {
   };
 
   const handleDetails = (id) => {
-    const eventToShow = events.find(event => event.id === id);
+    const eventToShow = events.find((event) => event.id === id);
     if (eventToShow) {
       setShowEvent(eventToShow); // Store event details in state
       setIsEyeModalOpen(true); // Open the modal
@@ -557,13 +554,13 @@ const EventManagement = () => {
     const words = query.trim().split(/\s+/).filter(Boolean);
     if (words.length === 0) return text;
 
-    const regex = new RegExp(`(${words.join('|')})`, 'gi');
+    const regex = new RegExp(`(${words.join("|")})`, "gi");
     const parts = text.split(regex);
 
     return (
       <>
         {parts.map((part, index) =>
-          words.some(word => part.toLowerCase() === word.toLowerCase()) ? (
+          words.some((word) => part.toLowerCase() === word.toLowerCase()) ? (
             <strong key={index}>{part}</strong>
           ) : (
             part
@@ -577,10 +574,9 @@ const EventManagement = () => {
     return <LoadingScreen />;
   }
 
-
   return (
     <Wrapper>
-      <section className='events'>
+      <section className="events">
         <h1>Events</h1>
         <div>
           <div className="search-container">
@@ -594,11 +590,19 @@ const EventManagement = () => {
             <FaSearch className="search-icon" />
           </div>
         </div>
-        <div className='button-class'>
-          {selectedEvents.length > 1 && (
-            <button className='mass-delete' onClick={handleMassDelete}>Delete</button>
-          )}
-          <button className='add-btn' onClick={handleAddEvent}>Add <MdAddCircle size={26} /></button>
+        <div className="button-wrapper">
+          <div className="button-placeholder">
+            {selectedEvents.length > 1 ? (
+              <button className="mass-delete" onClick={handleMassDelete}>
+                Delete <MdDelete size={26} />
+              </button>
+            ) : (
+              <div className="mass-delete-placeholder" /> // preserves space
+            )}
+            <button className="add-btn" onClick={handleAddEvent}>
+              Add <MdAddCircle size={26} />
+            </button>
+          </div>
         </div>
       </section>
       <section className="table-container" ref={tableRef}>
@@ -608,7 +612,10 @@ const EventManagement = () => {
               <th className="column checkbox">
                 <input
                   type="checkbox"
-                  checked={selectedEvents.length > 0 && selectedEvents.length === events.length}
+                  checked={
+                    selectedEvents.length > 0 &&
+                    selectedEvents.length === events.length
+                  }
                   disabled={events.length === 0}
                   onChange={handleSelectAll}
                 />
@@ -625,7 +632,9 @@ const EventManagement = () => {
           </thead>
           <tbody className="table-body">
             {events.filter((event) =>
-              (event?.name?.toLowerCase() ?? "").includes((searchQuery?.toLowerCase() ?? ""))
+              (event?.name?.toLowerCase() ?? "").includes(
+                searchQuery?.toLowerCase() ?? ""
+              )
             ).length === 0 ? (
               <tr key="no-event">
                 <td colSpan="9" className="no-data-message">
@@ -634,7 +643,9 @@ const EventManagement = () => {
               </tr>
             ) : (
               events
-                .filter((event) => event.name?.toLowerCase().includes(searchQuery.toLowerCase())) // Filter events by name
+                .filter((event) =>
+                  event.name?.toLowerCase().includes(searchQuery.toLowerCase())
+                ) // Filter events by name
                 .slice(0, visibleEntries)
                 .map((event) => (
                   <tr key={event.id} className="table-row">
@@ -649,8 +660,14 @@ const EventManagement = () => {
                     <td className="column name">
                       {highlightMatch(event.name, searchQuery)}
                     </td>
-                    <td className="column date"> {new Date(event.start_date_time).toLocaleDateString()}</td>
-                    <td className="column date"> {new Date(event.end_date_time).toLocaleDateString()}</td>
+                    <td className="column date">
+                      {" "}
+                      {new Date(event.start_date_time).toLocaleDateString()}
+                    </td>
+                    <td className="column date">
+                      {" "}
+                      {new Date(event.end_date_time).toLocaleDateString()}
+                    </td>
                     <td className="column venue">{event.venue}</td>
                     <td className="column description">{event.description}</td>
                     <td className="column status">
@@ -662,14 +679,28 @@ const EventManagement = () => {
                       />
                     </td>
                     <td className="column actions buttons">
-                      <p className="eye-btn" onClick={() => handleDetails(event.id)}><FaEye /></p>
-                      <p className="edit-btn" onClick={() => handleEdit(event.id)}><FaEdit /></p>
-                      <p className="delete-btn" onClick={() => handleDelete(event.id)}><MdDelete /></p>
+                      <p
+                        className="eye-btn"
+                        onClick={() => handleDetails(event.id)}
+                      >
+                        <FaEye />
+                      </p>
+                      <p
+                        className="edit-btn"
+                        onClick={() => handleEdit(event.id)}
+                      >
+                        <FaEdit />
+                      </p>
+                      <p
+                        className="delete-btn"
+                        onClick={() => handleDelete(event.id)}
+                      >
+                        <MdDelete />
+                      </p>
                     </td>
                   </tr>
                 ))
             )}
-
           </tbody>
         </table>
       </section>
@@ -686,14 +717,22 @@ const EventManagement = () => {
               value={editedEvent?.name || ""}
               onChange={handleInputChange}
             />
-            <div className='dateEvent'>
+            <div className="dateEvent">
               <div>
                 <label>Start Date:</label>
                 <DatePicker
                   name="start_date_time"
                   dateFormat="MM-dd-yyyy"
-                  selected={editedEvent?.start_date_time ? new Date(editedEvent.start_date_time) : null}
-                  onChange={(date) => handleInputChange({ target: { name: "start_date_time", value: date } })}
+                  selected={
+                    editedEvent?.start_date_time
+                      ? new Date(editedEvent.start_date_time)
+                      : null
+                  }
+                  onChange={(date) =>
+                    handleInputChange({
+                      target: { name: "start_date_time", value: date },
+                    })
+                  }
                 />
               </div>
               <div>
@@ -701,12 +740,19 @@ const EventManagement = () => {
                 <DatePicker
                   name="end_date_time"
                   dateFormat="MM-dd-yyyy"
-                  selected={editedEvent?.end_date_time ? new Date(editedEvent.end_date_time) : null}
-                  onChange={(date) => handleInputChange({ target: { name: "end_date_time", value: date } })}
+                  selected={
+                    editedEvent?.end_date_time
+                      ? new Date(editedEvent.end_date_time)
+                      : null
+                  }
+                  onChange={(date) =>
+                    handleInputChange({
+                      target: { name: "end_date_time", value: date },
+                    })
+                  }
                 />
               </div>
             </div>
-
 
             <label>Venue:</label>
             <input
@@ -715,7 +761,7 @@ const EventManagement = () => {
               value={editedEvent?.venue || ""}
               onChange={handleInputChange}
             />
-            <div className='eventLocation'>
+            <div className="eventLocation">
               <div>
                 <label>Latitude:</label>
                 <input
@@ -749,17 +795,20 @@ const EventManagement = () => {
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
-                  if (file.size > 5 * 1024 * 1024) {  // 5MB limit
-                    toast.warning("Image size must be less than 5MB. Please upload a smaller image.");
+                  if (file.size > 5 * 1024 * 1024) {
+                    // 5MB limit
+                    toast.warning(
+                      "Image size must be less than 5MB. Please upload a smaller image."
+                    );
                     e.target.value = null;
-                    setEditedEvent({ ...editedEvent, banner: null });  // Assuming you want to reset editedEvent banner
+                    setEditedEvent({ ...editedEvent, banner: null }); // Assuming you want to reset editedEvent banner
                   } else {
                     setEditedEvent({ ...editedEvent, banner: file });
                   }
                 }
               }}
             />
-            <div className='image-container'>
+            <div className="image-container">
               {editedEvent?.banner instanceof File ? (
                 <img
                   src={URL.createObjectURL(editedEvent.banner)}
@@ -776,7 +825,7 @@ const EventManagement = () => {
                 <div className="event-initials">
                   {editedEvent.name
                     ?.split(" ")
-                    .map(word => word[0]?.toUpperCase())
+                    .map((word) => word[0]?.toUpperCase())
                     .join("")
                     .slice(0, 2)}
                 </div>
@@ -786,8 +835,13 @@ const EventManagement = () => {
               <button
                 onClick={handleEditSave}
                 disabled={!isEventChanged(editEvent, editedEvent)}
-                className={!isEventChanged(editEvent, editedEvent) ? "disabled-button" : ""}
-                autoFocus >
+                className={
+                  !isEventChanged(editEvent, editedEvent)
+                    ? "disabled-button"
+                    : ""
+                }
+                autoFocus
+              >
                 Save
               </button>
 
@@ -795,188 +849,224 @@ const EventManagement = () => {
             </div>
           </div>
         </div>
-      )
-      }
+      )}
 
-      {
-        isAddModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Add Event</h2>
+      {isAddModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Add Event</h2>
 
-              <label>Event Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={newEvent.name}
-                autoFocus="true"
-                onChange={(e) =>
-                  setNewEvent({ ...newEvent, name: e.target.value || '' })}
-              />
-              <div className='dateEvent'>
-                <div>
-                  <label>Start Date:</label>
-                  <DatePicker
-                    name="start_date_time"
-                    dateFormat="MM-dd-yyyy"
-                    selected={newEvent.start_date_time} // Use 'selected' instead of 'value'
-                    onChange={(date) => setNewEvent({ ...newEvent, start_date_time: date })} // 'date' is the selected Date object
-                  />
-                </div>
-                <div>
-                  <label>End Date:</label>
-                  <DatePicker
-                    name="end_date_time"
-                    dateFormat="MM-dd-yyyy"
-                    selected={newEvent.end_date_time} // Use 'selected' instead of 'value'
-                    onChange={(date) => setNewEvent({ ...newEvent, end_date_time: date })} // 'date' is the selected Date object
-                  />
-                </div>
+            <label>Event Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={newEvent.name}
+              autoFocus="true"
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, name: e.target.value || "" })
+              }
+            />
+            <div className="dateEvent">
+              <div>
+                <label>Start Date:</label>
+                <DatePicker
+                  name="start_date_time"
+                  dateFormat="MM-dd-yyyy"
+                  selected={newEvent.start_date_time} // Use 'selected' instead of 'value'
+                  onChange={(date) =>
+                    setNewEvent({ ...newEvent, start_date_time: date })
+                  } // 'date' is the selected Date object
+                />
               </div>
-
-              <label>Venue:</label>
-              <input
-                type="text"
-                name="venue"
-                value={newEvent.venue}
-                onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value || '' })}
-              />
-
-
-              <label>Status:</label>
-              <select
-                name="status"
-                value={newEvent.status}
-                onChange={(e) => setNewEvent({ ...newEvent, status: e.target.value })}
-              >
-                <option value="enable">Enable</option>
-                <option value="disable">Disable</option>
-              </select>
-
-              <div className='eventLocation'>
-                <div>
-                  <label>Latitude:</label>
-                  <input
-                    type="text"
-                    name="latitude"
-                    value={newEvent.latitude}
-                    onChange={(e) => setNewEvent({ ...newEvent, latitude: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label>Longitude:</label>
-                  <input
-                    type="text"
-                    name="longitude"
-                    value={newEvent.longitude}
-                    onChange={(e) => setNewEvent({ ...newEvent, longitude: e.target.value })}
-                  />
-                </div>
+              <div>
+                <label>End Date:</label>
+                <DatePicker
+                  name="end_date_time"
+                  dateFormat="MM-dd-yyyy"
+                  selected={newEvent.end_date_time} // Use 'selected' instead of 'value'
+                  onChange={(date) =>
+                    setNewEvent({ ...newEvent, end_date_time: date })
+                  } // 'date' is the selected Date object
+                />
               </div>
+            </div>
 
-              <label>URL:</label>
-              <input
-                type="text"
-                name="url"
-                value={newEvent.web_page_url}
-                onChange={(e) => setNewEvent({ ...newEvent, web_page_url: e.target.value || '' })}
-              />
-              <label>Description:</label>
-              <textarea
-                name="description"
-                value={newEvent.description}
-                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value || '' })}
-              ></textarea>
-              <div className='image-Container'>
-                <div>
-                  <label>Upload Image:</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        if (file.size > 5 * 1024 * 1024) {  // 5MB limit
-                          toast.warning("Image size must be less than 5MB. Please upload a smaller image.");
-                          e.target.value = null;
-                          setNewEvent({ ...newEvent, banner: null });
-                        } else {
-                          setNewEvent({ ...newEvent, banner: file });
-                        }
+            <label>Venue:</label>
+            <input
+              type="text"
+              name="venue"
+              value={newEvent.venue}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, venue: e.target.value || "" })
+              }
+            />
+
+            <label>Status:</label>
+            <select
+              name="status"
+              value={newEvent.status}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, status: e.target.value })
+              }
+            >
+              <option value="enable">Enable</option>
+              <option value="disable">Disable</option>
+            </select>
+
+            <div className="eventLocation">
+              <div>
+                <label>Latitude:</label>
+                <input
+                  type="text"
+                  name="latitude"
+                  value={newEvent.latitude}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, latitude: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label>Longitude:</label>
+                <input
+                  type="text"
+                  name="longitude"
+                  value={newEvent.longitude}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, longitude: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <label>URL:</label>
+            <input
+              type="text"
+              name="url"
+              value={newEvent.web_page_url}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, web_page_url: e.target.value || "" })
+              }
+            />
+            <label>Description:</label>
+            <textarea
+              name="description"
+              value={newEvent.description}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, description: e.target.value || "" })
+              }
+            ></textarea>
+            <div className="image-Container">
+              <div>
+                <label>Upload Image:</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      if (file.size > 5 * 1024 * 1024) {
+                        // 5MB limit
+                        toast.warning(
+                          "Image size must be less than 5MB. Please upload a smaller image."
+                        );
+                        e.target.value = null;
+                        setNewEvent({ ...newEvent, banner: null });
+                      } else {
+                        setNewEvent({ ...newEvent, banner: file });
                       }
-                    }}
-                  />
-                </div>
-                <div className='image-container'>
-                  {newEvent.banner ? (
-                    <>
-                      <img
-                        src={URL.createObjectURL(newEvent.banner)}
-                        alt="Preview"
-                        className="event-image"
-                      />
-                    </>
-                  ) : (
-                    <div className="event-initials">
-                      {newEvent.name
-                        .split(" ")
-                        .map(word => word[0]?.toUpperCase())
-                        .join("")
-                        .slice(0, 2)}
-                    </div>
-                  )}
-                </div>
+                    }
+                  }}
+                />
               </div>
-              <div className="modal-buttons">
-                <button className="save" onClick={handleSaveEvent}>Save Event</button>
-                <button className="cancel" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
-              </div>
-            </div>
-          </div>
-        )
-      }
-
-      {
-        isEyeModalOpen && showEvent && (
-          <div className="event-modal">
-            <div className="event-modal-content">
-              <div className='eye-header'>
-                <h2 className="event-modal-title">Event Details</h2>
-                <FaTimes className="event-modal-close" onClick={() => setIsEyeModalOpen(false)} />
-              </div>
-              <div className='eye-details'>
-                <div className="event-modal-body">
-                  <p><strong>Name:</strong> {showEvent.name}</p>
-                  <p><strong>Start Date:</strong> {new Date(showEvent.start_date_time).toLocaleDateString()}</p>
-                  <p><strong>End Date:</strong> {new Date(showEvent.end_date_time).toLocaleDateString()}</p>
-                  <p><strong>Venue:</strong> {showEvent.venue}</p>
-                  <p><strong>Description:</strong> {showEvent.description}</p>
-                </div>
-                <div className='eye-banner'>
-                  {showEvent.banner ? (
+              <div className="image-container">
+                {newEvent.banner ? (
+                  <>
                     <img
-                      src={showEvent.banner}
-                      alt={`${showEvent.name} Banner`}
-                      style={{ maxWidth: '100%', height: 'auto' }}
+                      src={URL.createObjectURL(newEvent.banner)}
+                      alt="Preview"
+                      className="event-image"
                     />
-                  ) : (
-                    <div className="event-initials">
-                      {showEvent.name
-                        .split(" ")
-                        .map(word => word[0]?.toUpperCase())
-                        .join("")
-                        .slice(0, 2)}
-                    </div>
-                  )}
-                </div>
+                  </>
+                ) : (
+                  <div className="event-initials">
+                    {newEvent.name
+                      .split(" ")
+                      .map((word) => word[0]?.toUpperCase())
+                      .join("")
+                      .slice(0, 2)}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="modal-buttons">
+              <button className="save" onClick={handleSaveEvent}>
+                Save Event
+              </button>
+              <button
+                className="cancel"
+                onClick={() => setIsAddModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isEyeModalOpen && showEvent && (
+        <div className="event-modal">
+          <div className="event-modal-content">
+            <div className="eye-header">
+              <h2 className="event-modal-title">Event Details</h2>
+              <FaTimes
+                className="event-modal-close"
+                onClick={() => setIsEyeModalOpen(false)}
+              />
+            </div>
+            <div className="eye-details">
+              <div className="event-modal-body">
+                <p>
+                  <strong>Name:</strong> {showEvent.name}
+                </p>
+                <p>
+                  <strong>Start Date:</strong>{" "}
+                  {new Date(showEvent.start_date_time).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>End Date:</strong>{" "}
+                  {new Date(showEvent.end_date_time).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Venue:</strong> {showEvent.venue}
+                </p>
+                <p>
+                  <strong>Description:</strong> {showEvent.description}
+                </p>
+              </div>
+              <div className="eye-banner">
+                {showEvent.banner ? (
+                  <img
+                    src={showEvent.banner}
+                    alt={`${showEvent.name} Banner`}
+                    style={{ maxWidth: "100%", height: "auto" }}
+                  />
+                ) : (
+                  <div className="event-initials">
+                    {showEvent.name
+                      .split(" ")
+                      .map((word) => word[0]?.toUpperCase())
+                      .join("")
+                      .slice(0, 2)}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        )
-      }
+        </div>
+      )}
 
       <ToastContainer position="top-right" autoClose={1500} />
-    </Wrapper >
+    </Wrapper>
   );
 };
 

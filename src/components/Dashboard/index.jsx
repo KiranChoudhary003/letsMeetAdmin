@@ -1,5 +1,5 @@
 import axios from '../AxiosInstance';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState} from 'react';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import Wrapper from './style';
 import LoadingScreen from "../loading";  // <-- Added import
@@ -13,20 +13,16 @@ const Dashboard = () => {
     totalEvents: 0
   });
   const [loading, setLoading] = useState(true); // <-- Added loading state
-  const isFirstLoad = useRef(true);
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth * 0.8,
     height: window.innerHeight * 0.4
   });
 
-
   // Fetch Data from API
   useEffect(() => {
     const fetchData = async () => {
-      if (isFirstLoad.current) {
-        setLoading(true); // Show loading only on first mount
-      }
+      setLoading(true); // Always show loading screen when fetching data
       try {
         const usersRes = await axios.get(`/users/count?year=${selectedYearType}`);
         const eventsRes = await axios.get(`/events/count?year=${selectedYearType}`);
@@ -60,16 +56,12 @@ const Dashboard = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        if (isFirstLoad.current) {
-          setLoading(false); // <-- end loading only after first fetch
-          isFirstLoad.current = false; // mark initial load as done
-        }
+        setLoading(false); // Hide loading screen after data fetch completes
       }
     };
 
     fetchData();
   }, [selectedYearType]);
-
 
   // Handle window resize
   useEffect(() => {
@@ -111,7 +103,7 @@ const Dashboard = () => {
 
   const yAxisDomain = [0, Math.ceil(maxDataValue * 1.1)]; // 10% padding on top for readability
 
-  if (loading) return <LoadingScreen />; // <-- Show loading screen while loading
+  if (loading) return <LoadingScreen />; // Show loading screen while fetching data
 
   return (
     <Wrapper>

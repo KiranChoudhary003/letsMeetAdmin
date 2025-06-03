@@ -51,7 +51,7 @@ const Wrapper = styled.section`
     
     text-align: right;
     margin-bottom: 15px;
-    padding-right: 0.8vw;
+    padding-right: 4vw;
     margin-top : 25px;
 }
 
