@@ -606,7 +606,7 @@ const EventManagement = () => {
         </div>
       </section>
       <section className="table-container" ref={tableRef}>
-        <table className="whole-table">
+        <table>
           <thead className="table-header">
             <tr>
               <th className="column checkbox">

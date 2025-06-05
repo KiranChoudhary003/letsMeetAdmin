@@ -54,26 +54,23 @@ const AttendeeManagement = () => {
 
   return (
     <Wrapper>
-      <div className="header-container">
+      <section className="header-container">
         <h2 className="heading">Attendee Management</h2>
-        <div className="search-container">
-          <div className="search-box">
-            <FaSearch className="search-icon" />
+        <div>
+          <div className="search-container">
             <input
               type="text"
               placeholder="Search attendees..."
-              className="search-input"
+
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
             />
+            <FaSearch className="search-icon" />
           </div>
         </div>
-      </div>
-
-
-
-      {/* Table */}
-      <div className="table-container">
+      </section>
+      <section className="table-container">
         <table className="attendee-table">
           <thead>
             <tr>
@@ -108,7 +105,7 @@ const AttendeeManagement = () => {
             )}
           </tbody>
         </table>
-      </div>
+      </section>
     </Wrapper>
   );
 };

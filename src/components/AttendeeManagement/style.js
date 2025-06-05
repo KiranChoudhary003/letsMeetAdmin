@@ -1,33 +1,19 @@
 import styled from "styled-components";
 
 const Wrapper = styled.section`
-  padding: 24px;
-  margin: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  background-color: white;
-   
-  h2 {
-    font-size : 30px;
-    margin: 20px;
 
-  }
-   .header-container {
+ .header-container {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px; /* spacing before table */
-  gap: 20px;
-  flex-wrap: wrap; /* ensures responsive layout */
 }
 
 .heading {
-  margin: 0;
   font-size: 30px;
   font-weight: 600;
-  margin-top:-25px;
-  margin-left:-20px;
-   font-weight: 700; 
+  font-weight: 700;
+  margin: 10px 10px 9px 10px;
 }
 
 
@@ -37,56 +23,59 @@ const Wrapper = styled.section`
     margin-bottom: 16px;
     color: #333;
   }
-  .search-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;   /* Center the search box horizontally */
-  margin: 16px 0 24px 0;     /* Top and bottom margin */
-}
-
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;  
-  margin-top:-100px;   
-  margin-left:100px;      /* Optional: limit width */
-}
-
-.search-icon {
-  position: absolute;
-  left: 12px;
-  color: #888;
-  pointer-events: none;       /* Allow clicking through to input */
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px; /* Leave space for the icon */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s ease-in-out;
-}
-
-.search-input:focus {
-  border-color:black;
-  box-shadow: black;
-
-}
+ 
+    .button-placeholder {
+      display: flex;
+      gap: 10px; /* space between buttons */
+      align-items: center;
+    }
 
 
+    /* Search Input */
+    .search-input {
+      width: 280px;
+      padding: 12px 45px 12px 15px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      background: #f9f9f9;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Input Focus Effect */
+    .search-input:focus {
+      border-color: #007bff;
+      background: white;
+      box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    /* Search Icon */
+    .search-icon {
+      position: relative;
+      right: 30px;
+      color: #777;
+      cursor: pointer;
+      font-size: 18px;
+      transition: color 0.3s ease-in-out;
+    }
+
+ 
+    /* Search Icon Hover Effect */
+    .search-icon:hover {
+      color: #007bff;
+    }
   /* Scrollable Table Container */
   .table-container {
-    max-height: 500px; /* Increase height for better scrolling */
+    max-height: 490px;
     overflow-y: auto;
     overflow-x: auto;
     border-radius: 8px;
     border: 1px solid #ddd;
     background-color: white;
-    margin-top:-60px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .attendee-table {
@@ -94,6 +83,7 @@ const Wrapper = styled.section`
     border-collapse: separate;
     border-spacing: 0px;
     background-color: white;
+   
   }
 
   /* Fixed Header Styling */
@@ -107,6 +97,7 @@ const Wrapper = styled.section`
     position: sticky;
     top: 0;
     z-index: 100;
+     text-align:center;
    
   }
 
@@ -117,6 +108,7 @@ const Wrapper = styled.section`
   /* Table Rows & Column Styling */
   .attendee-table tbody tr {
     background-color: white;
+
     transition: all 0.3s ease-in-out;
   }
 
@@ -128,7 +120,7 @@ const Wrapper = styled.section`
   .attendee-table td {
     padding: 14px;
     
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
     border-right: 1px solid #ddd;
   }
@@ -143,31 +135,67 @@ const Wrapper = styled.section`
     background-color: #f9f9f9;
   }
 
-  /* Scrollbar Styling */
-  .table-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
+  /* Table Container with Scroll */
+.event-table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+  width: 100%;
+}
 
-  .table-container::-webkit-scrollbar-thumb {
-    background-color: white;
-    border-radius: 6px;
-  }
 
-  .table-container::-webkit-scrollbar-track {
-    background-color: #f3f3f3;
-  }
 
+/* Table Styling */
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Prevents squishing on small screens */
+}
+
+.event-table th,
+.event-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.event-table th {
+  background-color: rgba(0, 0, 0, 0.58);
+  color: white;
+}
+
+/* Scrollbar Styling */
+.event-table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.event-table-container::-webkit-scrollbar-thumb {
+  background-color: black;
+  border-radius: 6px;
+}
+
+.event-table-container::-webkit-scrollbar-track {
+  background-color: #f3f3f3;
+}
+
+/* Optional: For Firefox */
+.event-table-container {
+  scrollbar-width: thin;
+  scrollbar-color: black #f3f3f3;
+
+}
   /* Button Styling */
   .view-profile {
     background-color:rgb(177, 179, 215);
-    color: white;
+    color: black;
     padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
     border: none;
-    font-size:10px;
+    font-size:12px;
+    font-weight:550;
     transition: all 0.3s ease-in-out;
+    
   }
 
   .view-profile:hover {

@@ -1,21 +1,26 @@
 import styled from "styled-components";
 
 const Wrapper = styled.section`
+
+  .heading{
+    margin: 10px 10px 9px 10px;
+  }
+
   .profile-container {
-    width: 80vw; /* Full screen width */
-    height: 85vh; /* Full screen height */
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 50px;
+    margin-top:-100px;
     background-color: #f4f6f9;
+    margin-top : 5px;
   }
     
 
   .profile-content {
     display: flex;
     width: 80%;
-    height: auto%;
+    height: auto;
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
@@ -51,19 +56,37 @@ const Wrapper = styled.section`
     flex-direction: column;
     justify-content: center;
     text-align: left;
-    background: white;
+    
   }
 
+  .attendee-table {
+  width: 100%;
+  border: none;
+  margin-top: 1rem;
+  font-size: 27px;
+}
+
+.attendee-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.attendee-table td {
+  padding: 8px 12px;
+}
+
+/////*
   .profile-header {
-  font-size: 35px;
+  font-size: 32px;
   font-weight: bold;
   margin-bottom: 10px;
-  color:rgba(0, 0, 0, 0.58)
+  color:rgba(0, 0, 0, 0.58);
   text-transform: uppercase;
-  text-align: left; /* Aligns text to the left */
-  position: absolute;
-  top: 100px;
-  left: 250px;
+  text-align: center; /* Aligns text to the left */
+  //position: absolute;
+  margin-top: -45px;
+  left: 750px;
 }
 
   .profile-info {
@@ -80,26 +103,29 @@ const Wrapper = styled.section`
     display: inline-block;
     font-size: 30px; /* Bigger labels */
   }
+.back-button {
+  background-color: transparent;
+  color: black;
+  padding: 14px 28px;       /* Increased padding */
+  font-size: 35px;          /* Larger text */
+  font-weight: 2000;         /* Bold text */
+  border: none;
+  cursor: pointer;
+  margin-left: -15px;
+  margin-top: -10px;
+  transition: color 0.3s ease, text-decoration 0.2s ease;
+}
 
-  /* Back Button */
-  .back-button {
-    margin-top: 40px;
-    background-color: #ff4d4d;
-    color: white;
-    padding: 10px 26px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    border: none;
-    transition: 0.3s ease;
-    align-self: flex-start;
-    font-weight: bold;
-      margin-top:10px;
-  }
+.back-button:hover {
+  
+  color: #222; /* Slightly darker on hover */
+}
 
-  .back-button:hover {
-    background-color: #cc0000;
-  }
+.wholeprofile{
+overflow-y:auto;
+max-height:540px;
+
+}
     .event-list-container {
   width: 100%;
   max-width: 800px;
@@ -136,11 +162,19 @@ const Wrapper = styled.section`
   margin-bottom: 10px;
 }
 
+/* Wrapper for scroll */
+.event-table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+      width: 100%;
+      height:300px;
+}
+
 /* Table styling */
 .event-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    min-width: 600px; /* Optional: prevents table from squishing too much */
 }
 
 .event-table th, .event-table td {
@@ -150,9 +184,10 @@ const Wrapper = styled.section`
 }
 
 .event-table th {
-    background-color:rgba(0, 0, 0, 0.58);
+    background-color: rgba(0, 0, 0, 0.58);
     color: white;
 }
+
 
 /* Dropdown container */
 .dropdown {
@@ -301,6 +336,67 @@ const Wrapper = styled.section`
 }
 
 
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+
+.profile-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+ linkedin-button-start
+  {
+ 
+    padding: 20px 200px;
+    font-size: 16px;
+    color: white;
+    background-color: #0077b5;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    width:100%;
+    transition: background 0.3s;
+    margin-top:70px; /* Ensure proper spacing */
+  }
+
+
+
+.toggle-btn {
+ background-color: rgb(177,179,215);
+  color: #000;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-btn .dropdown-icon {
+  margin-left: 12px;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate icon when active */
+.toggle-btn .dropdown-icon.rotated {
+  transform: rotate(180deg);
+}
+
+  
 `;
 
 export default Wrapper;

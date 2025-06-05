@@ -16,13 +16,13 @@ const Wrapper = styled.section`
       align-items: center;
     }
 
-    .search-container {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      justify-content: flex-end;
-      position: relative;
-    }
+     .search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: flex-end;
+    position: relative;
+     }
 
     /* Search Input */
     .search-input {
@@ -60,7 +60,7 @@ const Wrapper = styled.section`
     }
 
     .bulk-reset-btn{
-        background-color: rgb(244, 67, 54);
+         background: #28a745;
       color: #fff;
       border: none;
       padding: 8px 15px;
@@ -103,52 +103,14 @@ const Wrapper = styled.section`
     }
   }
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 46px;
-    height: 24px;
-    left: 15px;
-  }
 
   .switch input {
     opacity: 0;
     width: 0;
     height: 0;
   }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-  }
-
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 4px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-  }
-
-  input:checked + .slider {
-    background-color: #4caf50; /* Green when active */
-  }
-
-  input:checked + .slider:before {
-    transform: translateX(22px);
-  }
-
+  
+  
   .table-container {
     max-height: 490px;
     overflow-y: auto;
@@ -297,18 +259,21 @@ const Wrapper = styled.section`
     gap: 15px;
   }
 
-  /* 📌 Close Button */
-  .close-btn {
-    position: absolute;
-    top: 3px;
-    right: 15px;
-    background: none;
-    color: #333;
-    font-size: 40px;
-    border: none;
-    cursor: pointer;
-    transition: color 0.3s ease-in-out;
+ 
   }
+  /* 📌 Close Button */
+.close-btn {
+  position: absolute;
+  top: 3px;
+  right: 15px;
+  background: none;
+  color: #333;
+  font-size: 40px;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
 
   .close-btn:hover {
     color: #dc3545;
@@ -361,7 +326,6 @@ const Wrapper = styled.section`
     display: inline-block;
     width: 46px;
     height: 24px;
-    left: 15px;
   }
 
   .switch input {
@@ -401,6 +365,60 @@ const Wrapper = styled.section`
   input:checked + .slider:before {
     transform: translateX(22px);
   }
+
+.newsavebtn
+{
+ button{
+  position: static;
+  top: 12px;
+  margin-right: px;
+  margin-left:-250px;
+  font-size: 16px;
+  background-color: rgb(76, 175, 80); 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  height:45px;
+  padding: 8px 16px;
+  cursor: pointer;
+  width:150px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+ }
+
+.newsavebtn:hover  {
+  background-color: rgb(56, 142, 60); /* Darker green on hover */
+  transform: scale(1.05);
+}
+
+
+.newsavebtn:active {
+  transform: scale(0.95);
+}
+
+
+ 
+}
+.newclosebtn
+{
+ button{
+  position: absolute;
+  margin-bottom: -200px;
+  margin-top:-60px;
+  margin-right: 30px;
+  margin-left:30px;
+  font-size: 16px;
+  background-color:  #ff4d4d; /* Green shade */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  height:45px;
+  padding: 8px 16px;
+  cursor: pointer;
+  width:150px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+ }
+
+ 
 `;
 
 export default Wrapper;

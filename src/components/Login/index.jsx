@@ -16,7 +16,7 @@ const Login = () => {
         if (token) {
             navigate('/dashboard');
         }
-    }, []);
+    }, [navigate]);
 
     const handleLogin = async () => {
         try {
@@ -24,6 +24,8 @@ const Login = () => {
 
             // Store token if needed
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('loginTime', Date.now().toString());
+
 
             // Redirect to dashboard
             navigate('/dashboard');

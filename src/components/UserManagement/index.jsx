@@ -1,7 +1,7 @@
-import { Eye, EyeOff, Search, Trash } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { confirmAlert } from "react-confirm-alert";
-import { FaEdit, FaEye, FaSearch, FaTimes } from "react-icons/fa";
+import { FaEdit, FaSearch } from "react-icons/fa";
 import { MdAddCircle, MdDelete, MdLockReset } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "../AxiosInstance";
@@ -104,6 +104,7 @@ const UserManagement = () => {
     const isEdit = modalType === "edit";
     const url = isEdit ? `/users/${currentUser.id}` : "/users";
 
+
     const userData = {
       first_name: currentUser.first_name || "",
       middle_name: currentUser.middle_name || "",
@@ -116,6 +117,7 @@ const UserManagement = () => {
       photo: currentUser.photo || "",
       linkedin_url: currentUser.linkedin_url || "", // <-- use linkedin_url consistently
     };
+
 
     try {
       const response = isEdit
@@ -191,13 +193,13 @@ const UserManagement = () => {
                 prevUsers.filter((user) => !selectedIds.includes(user.id))
               );
 
-              alert("Users deleted successfully");
+              toast.success("Users deleted successfully");
             } catch (error) {
               console.error(
                 "Bulk delete error:",
                 error.response?.data || error.message
               );
-              alert("Failed to delete users.");
+              toast.error("Failed to delete users.");
             }
           },
         },
@@ -217,15 +219,33 @@ const UserManagement = () => {
     // setNewPassword("");
   };
 
+  // const handleResetButton = () => {
+  //   if (
+  //     window.confirm(
+  //       "Are you sure you want to Reset Password for the selected users?"
+  //     )
+  //   ) {
+  //     alert(`Link sent successfully for Selected Users`);
+  //   }
+  // };
   const handleResetButton = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to Reset Password for the selected users?"
-      )
-    ) {
-      alert(`Link sent successfully for Selected Users`);
+    confirmAlert({
+      title: "Confirm Reset Password",
+      message: `Are you sure you want to reset password`,
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            toast.success(`Link sent successfully for selected user`)
+          }
+        },
+        {
+          label: "No"
+        }
+      ]
     }
-  };
+    )
+  }
 
   if (loading) return <LoadingScreen />; // Show loading screen while fetching data
 
@@ -314,63 +334,76 @@ const UserManagement = () => {
                 `${user.first_name ?? ""} ${user.last_name ?? ""}`
                   .toLowerCase()
                   .includes(search.toLowerCase())
-              )
-              .map((user) => (
-                <tr key={user.id}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={user.selected}
-                      onChange={() => handleSelectUser(user.id)}
-                    />
-                  </td>
-                  <td>{user.id}</td>
-                  <td>
-                    {user.first_name} {user.middle_name} {user.last_name}
-                  </td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>
-                    <label className="switch">
+              ).length === 0 ? (
+              <tr>
+                <td colSpan="8" style={{ textAlign: "center", padding: "20px" }}>
+                  No user data available.
+                </td>
+              </tr>
+            ) : (
+              users
+                .filter((user) =>
+                  `${user.first_name ?? ""} ${user.last_name ?? ""}`
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+                )
+                .map((user) => (
+                  <tr key={user.id}>
+                    <td>
                       <input
                         type="checkbox"
-                        checked={user.status?.toLowerCase() === "active"}
-                        onChange={() => handleToggleStatus(user.id)}
+                        checked={user.selected}
+                        onChange={() => handleSelectUser(user.id)}
                       />
-                      <span className="slider round"></span>
-                    </label>
-                  </td>
-                  <td>
-                    {user.showPassword ? user.password_hash : "••••••••"}
-                    <button
-                      onClick={() => handleTogglePassword(user.id)}
-                      className="password"
-                    >
-                      {user.showPassword ? (
-                        <EyeOff size={16} />
-                      ) : (
-                        <Eye size={16} />
-                      )}
-                    </button>
-                  </td>
-                  <td>
-                    <div className="button">
+                    </td>
+                    <td>{user.id}</td>
+                    <td>
+                      {user.first_name} {user.middle_name} {user.last_name}
+                    </td>
+                    <td>{user.email}</td>
+                    <td>{user.role}</td>
+                    <td>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={user.status?.toLowerCase() === "active"}
+                          onChange={() => handleToggleStatus(user.id)}
+                        />
+                        <span className="slider round"></span>
+                      </label>
+                    </td>
+                    <td>
+                      {user.showPassword ? user.password_hash : "••••••••"}
                       <button
-                        className="edit-btn"
-                        onClick={() => openModal("edit", user)}
+                        onClick={() => handleTogglePassword(user.id)}
+                        className="password"
                       >
-                        <FaEdit size={20} />
+                        {user.showPassword ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
                       </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        <MdDelete size={20} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td>
+                      <div className="button">
+                        <button
+                          className="edit-btn"
+                          onClick={() => openModal("edit", user)}
+                        >
+                          <FaEdit size={20} />
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          <MdDelete size={20} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+            )}
           </tbody>
         </table>
       </div>
@@ -434,7 +467,13 @@ const UserManagement = () => {
             />
             <input
               type="text"
+              value={`${currentUser.role_id ?? 3}`}
+              readOnly
+            />
+            <input
+              type="text"
               placeholder="Role"
+
               value={currentUser.role || ""}
               onChange={(e) =>
                 setCurrentUser({ ...currentUser, role: e.target.value })
@@ -448,11 +487,16 @@ const UserManagement = () => {
                 setCurrentUser({ ...currentUser, linkedin_url: e.target.value })
               }
             />
-            <button onClick={handleSaveUser}>Save</button>
-            <button onClick={closeModal}>Cancel</button>
+            <div className="newsavebtn">
+              <button onClick={handleSaveUser}>Save</button>
+            </div>
+            <div className="newclosebtn">
+              <button onClick={closeModal}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
+
 
       {/* Edit User Modal */}
       {modalType === "edit" && (
@@ -502,14 +546,8 @@ const UserManagement = () => {
               }
               required
             />
-            <input
-              type="password"
-              placeholder="Password"
-              value={currentUser.password || ""}
-              onChange={(e) =>
-                setCurrentUser({ ...currentUser, password: e.target.value })
-              }
-            />
+
+
             <input
               type="text"
               placeholder="Role"
@@ -526,8 +564,12 @@ const UserManagement = () => {
                 setCurrentUser({ ...currentUser, linkedin_url: e.target.value })
               }
             />
-            <button onClick={handleSaveUser}>Save</button>
-            <button onClick={closeModal}>Cancel</button>
+            <div className="newsavebtn">
+              <button onClick={handleSaveUser}>Save</button>
+            </div>
+            <div className="newclosebtn">
+              <button onClick={closeModal}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
