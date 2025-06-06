@@ -5,7 +5,7 @@ import { FaEdit, FaSearch } from "react-icons/fa";
 import { MdAddCircle, MdDelete, MdLockReset } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "../AxiosInstance";
-import LoadingScreen from "../loading";
+import LoadingScreen from "../../modules/loading";
 import Wrapper from "./style";
 
 const UserManagement = () => {

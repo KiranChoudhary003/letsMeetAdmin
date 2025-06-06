@@ -8,7 +8,7 @@ import { FaEdit, FaEye, FaSearch, FaTimes } from "react-icons/fa";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoadingScreen from "../loading";
+import LoadingScreen from "../../modules/loading";
 import Wrapper from "./style";
 
 const EventManagement = () => {

@@ -6,7 +6,8 @@ import { FaEdit, FaSearch } from "react-icons/fa";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoadingScreen from "../loading";
+import LoadingScreen from "../../modules/loading";
+import Loading from "../../modules/Save Loading";
 import Wrapper from "./style";
 
 const AttendeeRoleManagement = () => {
@@ -20,6 +21,7 @@ const AttendeeRoleManagement = () => {
     const [isVisible, setIsVisible] = useState(null);
     const [loading, setLoading] = useState(true);
     const [newRole, setNewRole] = useState({ role_name: "" });
+    const [isSaving, setIsSaving] = useState(false);
     const tableRef = useRef(null);
     const isFirstLoad = useRef(true);
 
@@ -67,6 +69,7 @@ const AttendeeRoleManagement = () => {
 
     const handleSave = useCallback(async () => {
         try {
+            setIsSaving(true);
             await axios.put(`/users/attendee/roles/${editedRoles.id}`, editedRoles, {
                 headers: { "Content-Type": "application/json" },
             });
@@ -79,6 +82,9 @@ const AttendeeRoleManagement = () => {
                 error?.response?.data || error.message
             );
             toast.error("Failed to update role");
+        }
+        finally {
+            setIsSaving(false);
         }
     }, [editedRoles, setIsModalOpen, setRefreshFlag]);
 
@@ -382,6 +388,7 @@ const AttendeeRoleManagement = () => {
                             onChange={(e) => handleInputChange("role_name", e.target.value)}
                         />
                         <div className="modal-buttons">
+                            {isSaving && <Loading />}
                             <button onClick={handleSave}>Save</button>
                             <button onClick={handleCancel}>Cancel</button>
                         </div>

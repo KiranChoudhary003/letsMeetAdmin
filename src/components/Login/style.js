@@ -59,7 +59,7 @@ const Wrapper = styled.section`
 
   input[type="button"] {
     margin-top: 10px;
-    background-color: rgb(177, 179, 215);
+    background-color: #b1b2d6;
     color: white;
     padding: 10px 25px;
     border-radius: 15px;
@@ -102,6 +102,7 @@ const Wrapper = styled.section`
       padding: 15px;
     }
   }
+  
 `;
 
 export default Wrapper;

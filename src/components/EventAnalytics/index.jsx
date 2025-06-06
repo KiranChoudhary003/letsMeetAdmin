@@ -7,7 +7,7 @@ import Wrapper from "./style";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from '../AxiosInstance';
-import LoadingScreen from "../loading";  // <-- Import LoadingScreen
+import LoadingScreen from "../../modules/loading";  // <-- Import LoadingScreen
 
 const EventAnalytics = () => {
   const [eventData, setEventData] = useState([]);
@@ -65,7 +65,6 @@ const EventAnalytics = () => {
       <h2>Event Analytics</h2>
 
       <div className="chart-container">
-        {/* Bar Chart */}
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={eventData}
@@ -74,35 +73,41 @@ const EventAnalytics = () => {
             <XAxis dataKey="event_name" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="connectionCount" barSize={50}>
+            <Legend /> {/* 👈 Add this line to show "Total Connections" in the legend */}
+            <Bar
+              dataKey="connectionCount"
+              name="Total Connections" // 👈 This name will appear in tooltip/legend
+              barSize={50}
+            >
               {eventData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
 
-        {/* Pie Chart */}
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={eventData}
-              dataKey="connectionCount"
-              nameKey="event_name"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              label
-            >
-              {eventData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </Wrapper>
+      </ResponsiveContainer>
+
+      {/* Pie Chart */}
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie
+            data={eventData}
+            dataKey="connectionCount"
+            nameKey="event_name"
+            cx="50%"
+            cy="50%"
+            outerRadius={100}
+            label
+          >
+            {eventData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+    </Wrapper >
   );
 };
 

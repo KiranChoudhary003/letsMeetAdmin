@@ -18,7 +18,7 @@ axiosInstance.interceptors.request.use(
       const timePassed = currentTime - parseInt(loginTime, 10);
 
       if (timePassed > TEN_HOURS_IN_MS) {
-        alert('Your session expired after 10 hours. Please log in again.');
+        alert('Your session has expired. Please log in again.');
         localStorage.clear();
 
         // 🔁 Redirect to logout path

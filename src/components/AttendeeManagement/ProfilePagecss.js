@@ -81,8 +81,6 @@ const Wrapper = styled.section`
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 10px;
-  color:rgba(0, 0, 0, 0.58);
-  text-transform: uppercase;
   text-align: center; /* Aligns text to the left */
   //position: absolute;
   margin-top: -45px;

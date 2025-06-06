@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Wrapper from './style';
 import axios from '../AxiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
-import LoadingScreen from '../loading'; // ✅ Import LoadingScreen
+import LoadingScreen from "../../modules/loading";
 
 const Settings = () => {
   const [loading, setLoading] = useState(true); // ✅ Add loading state

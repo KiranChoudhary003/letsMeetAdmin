@@ -5,10 +5,12 @@ import rectangle from '../../assets/rectangle.png';
 import Wrapper from './style';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../../modules/Save Loading';
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [login, setLogin] = useState({ email: '', password: '' });
+    const [showLoginTile, setShowLoginTile] = useState(false); // <- added for loader
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,23 +22,32 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
+            setShowLoginTile(true); // show loading animation
+
             const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/admin-auth/login`, login);
 
-            // Store token if needed
+            // Store token
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('loginTime', Date.now().toString());
 
-
-            // Redirect to dashboard
-            navigate('/dashboard');
+            // Small delay for animation effect
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 1000);
         } catch (error) {
             alert('Login failed: ' + (error.response?.data?.message || error.message));
+            setShowLoginTile(false); // hide loading on error
         }
     };
 
     return (
         <Wrapper>
             <div className='container'>
+
+                {/* Blur and loader */}
+                {showLoginTile && <Loading />}
+
+
                 <div className='login'>
                     <h1>Log In</h1>
 

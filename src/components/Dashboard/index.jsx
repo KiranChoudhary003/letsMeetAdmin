@@ -2,7 +2,7 @@ import axios from '../AxiosInstance';
 import { useEffect, useState} from 'react';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import Wrapper from './style';
-import LoadingScreen from "../loading";  // <-- Added import
+import LoadingScreen from "../../modules/loading";
 
 const Dashboard = () => {
   const [selectedYearType, setSelectedYearType] = useState('current'); // 'current' or 'previous'

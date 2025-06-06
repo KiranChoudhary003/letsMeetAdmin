@@ -12,7 +12,7 @@ import {
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from "../AxiosInstance";
-import LoadingScreen from "../loading"; // ✅ Import LoadingScreen
+import LoadingScreen from "../../modules/loading";
 
 const UserEngagement = () => {
   const [selectedTimePeriod, setSelectedTimePeriod] = useState("this_month");

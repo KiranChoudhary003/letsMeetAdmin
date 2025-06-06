@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Wrapper from "./ProfilePagecss.js";
 // import { constructNow } from "date-fns";
 import axios from '../AxiosInstance';
-import LoadingScreen from "../loading"; // ✅ Importing the LoadingScreen component
+import LoadingScreen from "../../modules/loading";
 
 const ProfilePage = () => {
   const navigate = useNavigate();

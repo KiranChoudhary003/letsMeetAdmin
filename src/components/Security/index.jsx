@@ -4,7 +4,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import Wrapper from './style'
 import axios from '../AxiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
-import LoadingScreen from "../loading";
+import LoadingScreen from "../../modules/loading";
 
 const Security = () => {
   const [isVisible, setIsVisible] = useState(null);

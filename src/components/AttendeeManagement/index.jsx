@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import Wrapper from "./style";
 import { useNavigate } from "react-router-dom";
 import axios from '../AxiosInstance';
-import LoadingScreen from "../loading";
+import LoadingScreen from "../../modules/loading";
 
 const AttendeeManagement = () => {
 
